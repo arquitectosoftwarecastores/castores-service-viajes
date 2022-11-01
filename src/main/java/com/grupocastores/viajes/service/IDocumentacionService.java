@@ -3,6 +3,18 @@ package com.grupocastores.viajes.service;
 import java.util.List;
 
 import com.grupocastores.commons.inhouse.FindTalonCustomResponse;
+import com.grupocastores.commons.inhouse.FolioDos;
+import com.grupocastores.commons.inhouse.FoliosGuias;
+import com.grupocastores.commons.inhouse.GuMesAnio;
+import com.grupocastores.commons.inhouse.GuMesAnioCustom;
+import com.grupocastores.commons.inhouse.Guias;
+import com.grupocastores.commons.inhouse.OperadorCustom;
+import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.oficinas.Guiaviaje;
+import com.grupocastores.commons.oficinas.Tg;
+import com.grupocastores.commons.oficinas.Viajes;
+
+import castores.dao.talones.GuiaviajeDao;
 
 public interface IDocumentacionService {
 
@@ -22,7 +34,133 @@ public interface IDocumentacionService {
      * @date 2022
      */
     public List<FindTalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente,String idOficinaCliente, String idOficinaDocumenta) throws Exception;
+    
+    /**
+     * getFolioViaje: Se consulta el proximo folio de viaje.
+     * 
+     * @param String idFolioViaje
+     * @param String idOficinaDocumenta
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return FolioDos
+     * @throws Exception 
+     * @date 2022-10-17
+     */
+    public FolioDos getFolioViaje(int idFolio, String idOficinaDocumenta);
+    
+    /**
+     * insertViaje: inserta nuevo viaje.
+     * 
+     * @param (Viajes) dataViaje
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return dataViaje Viajes
+     * @throws Exception 
+     * @date 2022-10-18
+     */
+    public Viajes insertViaje(Viajes dataViaje) throws Exception;
+    
+    /**
+     * insertGuia: inserta nueva guia.
+     * 
+     * @param (Guias) dataViaje
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Guias
+     * @throws Exception 
+     * @date 2022-10-18
+     */
+    public Guias insertGuia(Guias dataViaje) throws Exception;
+    
+    /**
+     * getFolioViaje: Se consulta el proximo folio  de guia.
+     * 
+     * @param String idFolioGuia
+     * @param String idOficinaDocumenta
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return FoliosGuias
+     * @throws Exception 
+     * @date 2022-10-18
+     */    
+    public FoliosGuias getFolioGuia(int idFolio, String idOficinaDocumenta);
 
-    public String getFolio(String idFolio, String idOficinaDocumenta);
+    /**
+     * updateFolioViaje: incrementa idfolio y clavefolio para su proximo uso.
+     * 
+     * @param int idFolio
+     * @param String claveFolio
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-10-20
+     */
+    public Boolean updateFolioViaje(long idFolio, String claveFolio, String linkedServer);
+    
+    /**
+     * insertTalonGuia: inserta detalle de talonguia.
+     * 
+     * @param  dataGuia (List<Tg>)
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-10-20
+     */
+    public Boolean insertTalonGuia(List<TgCustom> dataGuia);
+    
+    /**
+     * insertGuiaViaje: inserta detalle de GuiaViaje.
+     * 
+     * @param  GuiaviajeDao 
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-10-21
+     */
+    public Boolean insertGuiaViaje(Guiaviaje dataGuia) throws Exception;
+
+    /**
+     * updateFolioGuia: incrementa idfolio y clavefolio para su proximo uso.
+     * 
+     * @param int idFolioGuia
+     * @param String claveFolioGuia
+     * @param String linkedServer
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-10-21
+     */
+    Boolean updateFolioGuia(String noFolioGuia, String linkedServer);
+    
+    /**
+     * updateViajes: inserta nuevo viaje.
+     * 
+     * @param (Viajes) dataViaje
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return dataViaje Viajes
+     * @throws Exception 
+     * @date 2022-10-24
+     */
+    public Viajes updateViajes(Viajes dataViaje);
+
+    public Viajes getViaje(long idViaje, String idOficina);
+
+    public Guias updateGuia(Guias dataGuia);
+
+    public Guias getGuia(String noGuia, String tabla);
+
+    public Boolean insertGuMesAnio(GuMesAnioCustom dataGuiaMesAnio);
+
+    public Boolean updateGuMesAnio(GuMesAnioCustom dataGuiaMesAnio) throws Exception;
+
+    public GuMesAnio getGuMesAnio(String noGuia, String tabla, String idOficinaDocumenta);
+
+    public List<OperadorCustom> getOperador(String unidad, int tipoUnidad);
+    
 
 }

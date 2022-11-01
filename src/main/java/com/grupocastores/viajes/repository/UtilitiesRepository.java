@@ -1,5 +1,7 @@
 package com.grupocastores.viajes.repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
@@ -8,6 +10,7 @@ import javax.persistence.StoredProcedureQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.grupocastores.commons.oficinas.Personal;
 import com.grupocastores.commons.oficinas.Servidores;
 
 @Repository
@@ -17,9 +20,11 @@ public class UtilitiesRepository {
     private EntityManager entityManager;
     
     public static final String DB_23 = "PRUEBAS23";
-    public static final String DB_13 = "PRUEBAS13";
+    public static final String DB_13 = "TIJUANAPRUEBA";
     public static final String queryGetLinkedServerByIdOficina = 
             "SELECT * FROM syn.dbo.v_Oficinas where Oficina = \'%s\'";
+    static final String queryGetPersonalByIdUsuario = 
+            "SELECT * FROM OPENQUERY("+ DB_13 +",'SELECT * FROM personal.personal p WHERE p.idusuario = \"%s\"');";
     
     
     /**
@@ -55,5 +60,25 @@ public class UtilitiesRepository {
                 idOficina),Servidores.class
             );
         return (Servidores) query.getResultList().get(0);
+    }
+    
+    /**
+     * getPersonalByIdUsuario: Obtiene el personal por id de usuario.
+     * 
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra]
+     * @throws Exception 
+     * @date 2022-08-19
+     */
+    @SuppressWarnings("unchecked")
+    public Personal getPersonalByIdUsuario (int idUsuario) throws Exception {
+        
+        Query query = entityManager.createNativeQuery(String.format(
+                queryGetPersonalByIdUsuario, idUsuario),Personal.class);
+        
+        List<Personal> list = query.getResultList();
+        if (list == null)
+            throw new Exception("No se pudo obtener el registro del usuario: "+idUsuario );
+        return (Personal) list.get(0);
     }
 }

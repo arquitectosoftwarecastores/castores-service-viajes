@@ -6,11 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupocastores.commons.inhouse.FindTalonCustomResponse;
+import com.grupocastores.commons.inhouse.FolioDos;
+import com.grupocastores.commons.inhouse.FoliosGuias;
+import com.grupocastores.commons.inhouse.GuMesAnio;
+import com.grupocastores.commons.inhouse.GuMesAnioCustom;
+import com.grupocastores.commons.inhouse.Guias;
+import com.grupocastores.commons.inhouse.OperadorCustom;
+import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.oficinas.Guiaviaje;
+import com.grupocastores.commons.oficinas.Tg;
+import com.grupocastores.commons.oficinas.Viajes;
 import com.grupocastores.viajes.service.IDocumentacionService;
+
+import castores.dao.talones.GuiaviajeDao;
 
 
 @RestController
@@ -35,16 +50,120 @@ public class DocumentacionController {
         
         return ResponseEntity.ok(response);
         
-    }
-    
-    @GetMapping("/getFolio/{idFolio}/{idOficinaDocumenta}")
-    public ResponseEntity<String> getFolio(
-            @PathVariable("idFolio") String idFolio, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
-         String folio = documentacionService.getFolio(idFolio, idOficinaDocumenta);
-       
-        
+    } 
+      
+    @GetMapping("/getFolioViaje/{idFolio}/{idOficinaDocumenta}")
+    public ResponseEntity<FolioDos> getFolioViaje(
+            @PathVariable("idFolio") int idFolio, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        FolioDos folio = documentacionService.getFolioViaje(idFolio, idOficinaDocumenta);
         return ResponseEntity.ok(folio);
-        
     }
     
+    @GetMapping("/getFolioGuia/{idFolio}/{idOficinaDocumenta}")
+    public ResponseEntity<FoliosGuias> getFolioTalon(
+            @PathVariable("idFolio") int idFolio, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        FoliosGuias folio = documentacionService.getFolioGuia(idFolio, idOficinaDocumenta);
+        return ResponseEntity.ok(folio);
+    }
+    
+    @PostMapping("/insertViaje")
+    public ResponseEntity<Viajes> insertViajes(
+          @RequestBody Viajes dataViaje) throws Exception{
+      Viajes response = documentacionService.insertViaje(dataViaje);
+      if (response == null)
+          return ResponseEntity.noContent().build();
+      return ResponseEntity.ok(response);
+    }
+    @PutMapping("/updateViaje")
+    public ResponseEntity<Viajes> updateViajes(
+            @RequestBody Viajes dataViaje) throws Exception{
+        Viajes response = documentacionService.updateViajes(dataViaje);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+      }
+    
+    @GetMapping("/getViaje/{idViaje}/{idOficina}")
+    public ResponseEntity<Viajes> getViaje(
+            @PathVariable("idViaje") long idViaje, @PathVariable("idOficina") String idOficina) throws Exception{
+        Viajes response = documentacionService.getViaje(idViaje, idOficina);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+      }
+    
+    @PostMapping("/insertGuia")
+    public ResponseEntity<Guias> insertGuia(
+          @RequestBody Guias dataGuia) throws Exception{
+        Guias response = documentacionService.insertGuia(dataGuia);
+      if (response == null)
+          return ResponseEntity.noContent().build();
+      return ResponseEntity.ok(response);
+    }
+    
+    @PutMapping("/updateGuia")
+    public ResponseEntity<Guias> updateGuia(
+            @RequestBody Guias dataGuia) throws Exception{
+        Guias response = documentacionService.updateGuia(dataGuia);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+      }
+    
+    @GetMapping("/getGuia/{noGuia}/{tabla}")
+    public ResponseEntity<Guias> getGuia(
+            @PathVariable("noGuia") String noGuia, @PathVariable("tabla") String tabla) throws Exception{
+        Guias response = documentacionService.getGuia(noGuia, tabla);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+      }
+    
+    @PostMapping("/insertTalonGuia")
+    public ResponseEntity<Boolean> insertTalonGuia(
+          @RequestBody List<TgCustom> dataGuia) throws Exception{
+        Boolean response = documentacionService.insertTalonGuia(dataGuia);
+        if (!response)
+          return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/insertGuMesAnio")
+    public ResponseEntity<Boolean> insertGuMesAnio(
+          @RequestBody GuMesAnioCustom dataGuiaMesAnio) throws Exception{
+        Boolean response = documentacionService.insertGuMesAnio(dataGuiaMesAnio);
+        if (!response)
+          return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+    }
+    
+    @PutMapping("/updateGuMesAnio")
+    public ResponseEntity<Boolean> updateGuMesAnio(
+            @RequestBody GuMesAnioCustom dataGuiaMesAnio) throws Exception{
+        Boolean response = documentacionService.updateGuMesAnio(dataGuiaMesAnio);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/getGuMesAnio/{noGuia}/{tabla}/{idOficinaDocumenta}")
+    public ResponseEntity<GuMesAnio> getGuMesAnio(
+            @PathVariable("noGuia") String noGuia, @PathVariable("tabla") String tabla, @PathVariable String idOficinaDocumenta) throws Exception{
+        GuMesAnio response = documentacionService.getGuMesAnio(noGuia, tabla, idOficinaDocumenta);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/findOperadores/{unidad}/{tipoUnidad}")
+    public ResponseEntity<List<OperadorCustom>> getOperador(
+            @PathVariable("unidad") String unidad, @PathVariable("tipoUnidad") int tipoUnidad ) throws Exception{
+        List<OperadorCustom> response = documentacionService.getOperador(unidad, tipoUnidad);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+      }
+    
+    
+      
 }
