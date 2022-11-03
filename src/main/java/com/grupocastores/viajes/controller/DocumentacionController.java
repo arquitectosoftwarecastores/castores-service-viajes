@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupocastores.commons.inhouse.FindTalonCustomResponse;
@@ -20,12 +21,8 @@ import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.TgCustom;
-import com.grupocastores.commons.oficinas.Guiaviaje;
-import com.grupocastores.commons.oficinas.Tg;
 import com.grupocastores.commons.oficinas.Viajes;
 import com.grupocastores.viajes.service.IDocumentacionService;
-
-import castores.dao.talones.GuiaviajeDao;
 
 
 @RestController
@@ -35,7 +32,7 @@ public class DocumentacionController {
     @Autowired
     IDocumentacionService documentacionService;
     
-    @GetMapping("/findTalones/{mesAnio}/{idEsquema}/{tipoViaje}/{tipoUnidad}/{idCliente}/{idOficinaCliente}/{idOficinaDocumenta}")
+    @RequestMapping("/findTalones/{mesAnio}/{idEsquema}/{tipoViaje}/{tipoUnidad}/{idCliente}/{idOficinaCliente}/{idOficinaDocumenta}")
     public ResponseEntity<List<FindTalonCustomResponse>> findTalones(
             @PathVariable("mesAnio") String mesAnio, 
             @PathVariable("idEsquema") int idEsquema,
@@ -43,9 +40,11 @@ public class DocumentacionController {
             @PathVariable("tipoUnidad") int tipoUnidad,
             @PathVariable("idCliente") int idCliente,
             @PathVariable("idOficinaCliente") String idOficinaCliente,
-            @PathVariable("idOficinaDocumenta") String idOficinaDocumenta
+            @PathVariable("idOficinaDocumenta") String idOficinaDocumenta,
+            @RequestParam String determinantesOrigen,
+            @RequestParam String determinantesDestino
             ) throws Exception{
-        List<FindTalonCustomResponse> response = documentacionService.findTalones(mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, idOficinaDocumenta);
+        List<FindTalonCustomResponse> response = documentacionService.findTalones(mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, idOficinaDocumenta, determinantesOrigen, determinantesDestino);
        
         
         return ResponseEntity.ok(response);

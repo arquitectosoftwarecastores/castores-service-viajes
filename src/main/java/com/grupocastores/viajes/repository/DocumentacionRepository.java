@@ -29,7 +29,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
     
     static final String queryFindTalones =
            //"SELECT * FROM OPENQUERY( %s, 'SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon WHERE tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\";');";
-            "SELECT * FROM OPENQUERY(%s, 'SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon WHERE tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\";');";
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon INNER JOIN talones.ajustesgenerales taj ON  (tr.idofirte = taj.idlugarorigen OR tr.idofirte = taj.oficinaajusta) AND (tr.idofidest = taj.idlugardestino OR tr.idofidest = taj.oficinaajusta) WHERE tr.idclasificaciondoc = 2 AND tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\" AND tr.idcdrec IN (%s) AND tr.idcddes IN (%s)  AND taj.porcentaje >=90 GROUP BY tr.cla_talon;');";
        
     static final String queryGetViaje =
              "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.viajes v WHERE v.idviaje = %s AND v.idoficina = \"%s\";');";
@@ -79,10 +79,10 @@ public class DocumentacionRepository extends UtilitiesRepository{
      * @date 2022-10-17
      */
     @SuppressWarnings("unchecked")
-    public List<Object[]> findTalones( String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String linkedServer){
+    public List<Object[]> findTalones( String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String determinanteOrigen, String determinanteDestino, String linkedServer){
         
         Query query = entityManager.createNativeQuery(String.format(queryFindTalones,linkedServer,
-                 mesAnio, tipoUnidad, idEsquema, idCliente, idOficinaCliente)
+                 mesAnio, tipoUnidad, idEsquema, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino)
             );
         return query.getResultList();
         

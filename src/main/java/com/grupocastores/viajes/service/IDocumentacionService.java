@@ -33,7 +33,7 @@ public interface IDocumentacionService {
      * @throws Exception 
      * @date 2022
      */
-    public List<FindTalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente,String idOficinaCliente, String idOficinaDocumenta) throws Exception;
+    public List<FindTalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente,String idOficinaCliente, String idOficinaDocumenta, String determinanteOrigen, String determinanteDestino) throws Exception;
     
     /**
      * getFolioViaje: Se consulta el proximo folio de viaje.
@@ -51,7 +51,8 @@ public interface IDocumentacionService {
     /**
      * insertViaje: inserta nuevo viaje.
      * 
-     * @param (Viajes) dataViaje
+  @Override
+       * @param (Viajes) dataViaje
      * @version 0.0.1
      * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
      * @return dataViaje Viajes

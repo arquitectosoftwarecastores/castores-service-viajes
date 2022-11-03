@@ -1,11 +1,6 @@
 package com.grupocastores.viajes.service;
 
-import static org.junit.Assert.assertEquals;
-
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.grupocastores.commons.inhouse.BitacoraViajesRequest;
 import com.grupocastores.commons.inhouse.FindTalonCustomResponse;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
@@ -26,12 +20,9 @@ import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Personal;
 import com.grupocastores.commons.oficinas.Servidores;
-import com.grupocastores.commons.oficinas.Tg;
 import com.grupocastores.commons.oficinas.Viajes;
 import com.grupocastores.viajes.repository.DocumentacionRepository;
 import com.grupocastores.viajes.repository.UtilitiesRepository;
-
-import castores.dao.talones.GuiaviajeDao;
 
 @Service
 public class DocumentacionServiceImpl implements IDocumentacionService{
@@ -61,13 +52,13 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
      * @date 2022-10-17
      */
     @Override
-    public List<FindTalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String idOficinaDocumenta ) throws Exception {
+    public List<FindTalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String idOficinaDocumenta, String determinanteOrigen, String determinanteDestino ) throws Exception {
        
         
-//        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
 //        List<Object[]> list = documentacionRepository.findTalones(server.getServidorVinculado(), mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente);
 
-        List<Object[]> list = documentacionRepository.findTalones( mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, DB);
+        List<Object[]> list = documentacionRepository.findTalones( mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino, DB);
         List<FindTalonCustomResponse> listTalones = new ArrayList<>();
         
         list.stream().forEach(item -> {
