@@ -9,7 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.grupocastores.commons.inhouse.FindTalonCustomResponse;
+import com.grupocastores.commons.inhouse.TalonCustomResponse;
+import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -52,21 +53,19 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
      * @date 2022-10-17
      */
     @Override
-    public List<FindTalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String idOficinaDocumenta, String determinanteOrigen, String determinanteDestino ) throws Exception {
-       
-        
+    public List<TalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String idOficinaDocumenta, String determinanteOrigen, String determinanteDestino ) throws Exception {
+           
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-//        List<Object[]> list = documentacionRepository.findTalones(server.getServidorVinculado(), mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente);
-
-        List<Object[]> list = documentacionRepository.findTalones( mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino, DB);
-        List<FindTalonCustomResponse> listTalones = new ArrayList<>();
-        
-        list.stream().forEach(item -> {
-            listTalones.add(new FindTalonCustomResponse((String) item[0], (BigDecimal) item[1], (String) item[2],(String) item[3],(String) item[4],(String) item[5],(int) item[6],(int) item[7], (int) item[8], (String) item[9])  ) ;         
-        });
-        
-        return listTalones;
+        List<TalonCustomResponse> list = documentacionRepository.findTalones( mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino, DB);      
+        return list;
        
+    }
+    
+    @Override
+    public DetaCo findDetacoSumatoria(String claTalon, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        DetaCo list = documentacionRepository.findDetacoSumatoria( claTalon, DB);      
+        return list;
     }
 
     /**
@@ -402,6 +401,8 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
        return documentacionRepository.getOperador(unidad, tipoUnidad);
        
     }
+
+
 
    
     

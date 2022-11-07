@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.grupocastores.commons.inhouse.FindTalonCustomResponse;
+import com.grupocastores.commons.inhouse.TalonCustomResponse;
+import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -33,7 +34,7 @@ public class DocumentacionController {
     IDocumentacionService documentacionService;
     
     @RequestMapping("/findTalones/{mesAnio}/{idEsquema}/{tipoViaje}/{tipoUnidad}/{idCliente}/{idOficinaCliente}/{idOficinaDocumenta}")
-    public ResponseEntity<List<FindTalonCustomResponse>> findTalones(
+    public ResponseEntity<List<TalonCustomResponse>> findTalones(
             @PathVariable("mesAnio") String mesAnio, 
             @PathVariable("idEsquema") int idEsquema,
             @PathVariable("tipoViaje") int tipoViaje,
@@ -44,9 +45,19 @@ public class DocumentacionController {
             @RequestParam String determinantesOrigen,
             @RequestParam String determinantesDestino
             ) throws Exception{
-        List<FindTalonCustomResponse> response = documentacionService.findTalones(mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, idOficinaDocumenta, determinantesOrigen, determinantesDestino);
+        List<TalonCustomResponse> response = documentacionService.findTalones(mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, idOficinaDocumenta, determinantesOrigen, determinantesDestino);
        
         
+        return ResponseEntity.ok(response);
+        
+    } 
+    
+    @GetMapping("/findDetacoSumatoria/{claTalon}/{idOficinaDocumenta}")
+    public ResponseEntity<DetaCo> fintDetacoSumatoria(
+            @PathVariable("claTalon") String claTalon,       
+            @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        DetaCo response = documentacionService.findDetacoSumatoria(claTalon,idOficinaDocumenta);
+             
         return ResponseEntity.ok(response);
         
     } 

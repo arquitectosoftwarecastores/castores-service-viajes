@@ -8,6 +8,8 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
+import com.grupocastores.commons.inhouse.TalonCustomResponse;
+import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -28,9 +30,11 @@ public class DocumentacionRepository extends UtilitiesRepository{
     private EntityManager entityManager;
     
     static final String queryFindTalones =
-           //"SELECT * FROM OPENQUERY( %s, 'SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon WHERE tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\";');";
-            "SELECT * FROM OPENQUERY(%s, ' SELECT * FROM ( SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon INNER JOIN talones.ajustesgenerales taj ON  (tr.idofirte = taj.idlugarorigen OR tr.idofirte = taj.oficinaajusta) AND (tr.idofidest = taj.idlugardestino OR tr.idofidest = taj.oficinaajusta) WHERE tr.idclasificaciondoc = 2 AND tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\" AND tr.idcdrec IN (%s) AND tr.idcddes IN (%s)  ORDER BY taj.porcentaje DESC ) AS tem GROUP BY tem.cla_talon');";
-       
+            "SELECT * FROM OPENQUERY(%s, ' SELECT * FROM ( SELECT tr.cla_talon AS clatalon, tr.nomorigen, tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina, tr.importeseguro,tr.recoleccion, tr.entrega, tr.maniobras, tr.ferry, tr.revac, tr.otroscargos, tr.gps, tr.importesubtotal, tr.importeiva, tr.importeiva_ret AS importeivaret,tr.otras_lineas AS otraslineas, tr.importetotal, tr.val_decl AS valdecl FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon INNER JOIN talones.ajustesgenerales taj ON  (tr.idofirte = taj.idlugarorigen OR tr.idofirte = taj.oficinaajusta) AND (tr.idofidest = taj.idlugardestino OR tr.idofidest = taj.oficinaajusta) WHERE tr.idclasificaciondoc = 2 AND tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\" AND tr.idcdrec IN (%s) AND tr.idcddes IN (%s)  ORDER BY taj.porcentaje DESC ) AS tem GROUP BY tem.clatalon');";
+    
+    static final String queryDetaCoSumatoria =
+             "SELECT * FROM OPENQUERY(%s, ' SELECT cla_talon AS clatalon,SUM(bultos) AS bultos, empaque, que_contiene AS quecontiene, SUM(peso_total) AS pesototal, SUM(flete) AS flete, idpromocion, preciopromocion, preciosinpromocion  FROM talones.detaco where cla_talon = \"%s\" GROUP BY cla_talon');";
+           
     static final String queryGetViaje =
              "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.viajes v WHERE v.idviaje = %s AND v.idoficina = \"%s\";');";
     
@@ -79,12 +83,37 @@ public class DocumentacionRepository extends UtilitiesRepository{
      * @date 2022-10-17
      */
     @SuppressWarnings("unchecked")
-    public List<Object[]> findTalones( String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String determinanteOrigen, String determinanteDestino, String linkedServer){
+    public List<TalonCustomResponse> findTalones( String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String determinanteOrigen, String determinanteDestino, String linkedServer){
         
         Query query = entityManager.createNativeQuery(String.format(queryFindTalones,linkedServer,
-                 mesAnio, tipoUnidad, idEsquema, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino)
+                 mesAnio, tipoUnidad, idEsquema, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino),
+                TalonCustomResponse.class
             );
-        return query.getResultList();
+        List<TalonCustomResponse> list = query.getResultList();
+        return list;
+        
+    }
+    
+    /**
+     * findTalones: Se consultan los detalles de el talon .
+     * 
+     * @param String cla_talon
+   
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Coordenada
+     * @throws Exception 
+     * @date 2022-11-07
+     */
+    @SuppressWarnings("unchecked")
+    public DetaCo findDetacoSumatoria( String claTalon, String linkedServer){
+        
+        Query query = entityManager.createNativeQuery(String.format(queryDetaCoSumatoria,linkedServer,
+                claTalon),
+                DetaCo.class
+            );
+        return (DetaCo) query.getResultList().get(0);
+
         
     }
     
@@ -245,7 +274,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
      */ 
     public FoliosGuias getFolioGuia(int idFolio, String linkedServer) {
         Query query = entityManager.createNativeQuery(String.format(queryFindFolioGuia,linkedServer,
-                 idFolio),FolioDos.class
+                 idFolio),FoliosGuias.class
            );
        return (FoliosGuias) query.getResultList().get(0);       
     }
@@ -344,6 +373,14 @@ public class DocumentacionRepository extends UtilitiesRepository{
     return resultList;
     }
 
+    public boolean insertImporteguias(GuMesAnioCustom dataGuia, String linkedServer) {
+        String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
+                + " 'SELECT * FROM talones.gu%s LIMIT 1') VALUES('"+dataGuia.getNoGuia()+"', '"+dataGuia.getUnidad()+"','"+dataGuia.getPlacas()+"','"+dataGuia.getIdoperador()+"','"+dataGuia.getRemolque()+"','"+dataGuia.getOrigen()+"','"+dataGuia.getDestino()+"','"+dataGuia.getDespacho()+"','"+dataGuia.getIdpersonal()+"','"+dataGuia.getIdoficina()+"','"+dataGuia.getMoneda()+"','"+dataGuia.getConversion()+"','"+dataGuia.getFecha()+"','"+dataGuia.getHora()+"','"+dataGuia.getStatus()+"' )";
+        
+        if (executeStoredProcedure(queryCreateViajes) == false)
+           return false; 
+        return true;  
+    }
     
 
    

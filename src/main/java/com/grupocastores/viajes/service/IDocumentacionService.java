@@ -2,7 +2,8 @@ package com.grupocastores.viajes.service;
 
 import java.util.List;
 
-import com.grupocastores.commons.inhouse.FindTalonCustomResponse;
+import com.grupocastores.commons.inhouse.TalonCustomResponse;
+import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -33,7 +34,7 @@ public interface IDocumentacionService {
      * @throws Exception 
      * @date 2022
      */
-    public List<FindTalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente,String idOficinaCliente, String idOficinaDocumenta, String determinanteOrigen, String determinanteDestino) throws Exception;
+    public List<TalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente,String idOficinaCliente, String idOficinaDocumenta, String determinanteOrigen, String determinanteDestino) throws Exception;
     
     /**
      * getFolioViaje: Se consulta el proximo folio de viaje.
@@ -162,6 +163,8 @@ public interface IDocumentacionService {
     public GuMesAnio getGuMesAnio(String noGuia, String tabla, String idOficinaDocumenta);
 
     public List<OperadorCustom> getOperador(String unidad, int tipoUnidad);
+
+    public DetaCo findDetacoSumatoria(String claTalon, String idOficinaDocumenta);
     
 
 }
