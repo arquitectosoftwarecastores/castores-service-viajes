@@ -29,7 +29,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
     
     static final String queryFindTalones =
            //"SELECT * FROM OPENQUERY( %s, 'SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon WHERE tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\";');";
-            "SELECT * FROM OPENQUERY(%s, 'SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon INNER JOIN talones.ajustesgenerales taj ON  (tr.idofirte = taj.idlugarorigen OR tr.idofirte = taj.oficinaajusta) AND (tr.idofidest = taj.idlugardestino OR tr.idofidest = taj.oficinaajusta) WHERE tr.idclasificaciondoc = 2 AND tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\" AND tr.idcdrec IN (%s) AND tr.idcddes IN (%s)  AND taj.porcentaje >=90 GROUP BY tr.cla_talon;');";
+            "SELECT * FROM OPENQUERY(%s, ' SELECT * FROM ( SELECT tr.cla_talon,tr.importetotal,tr.nomorigen,tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon INNER JOIN talones.ajustesgenerales taj ON  (tr.idofirte = taj.idlugarorigen OR tr.idofirte = taj.oficinaajusta) AND (tr.idofidest = taj.idlugardestino OR tr.idofidest = taj.oficinaajusta) WHERE tr.idclasificaciondoc = 2 AND tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\" AND tr.idcdrec IN (%s) AND tr.idcddes IN (%s)  ORDER BY taj.porcentaje DESC ) AS tem GROUP BY tem.cla_talon');";
        
     static final String queryGetViaje =
              "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.viajes v WHERE v.idviaje = %s AND v.idoficina = \"%s\";');";
@@ -43,7 +43,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
             + " INNER JOIN camiones.unidades u ON c.unidad = u.unidad"
             + " INNER JOIN camiones.operadores o ON o.unidad = c.unidad"
             + " LEFT JOIN personal.personal pe ON pe.idpersonal = o.idpersonal AND pe.status = 1"
-            + " WHERE c.unidad = \"%s\"  AND u.tipounidad = %s "
+            + " WHERE c.unidad = \"%s\"  AND u.tipounidad = %s AND pe.status >= 0 "
             + " UNION"
             + " SELECT c.unidad, u.tipounidad, os.idoperador,  CONCAT_WS(\" \",pe.nombre,pe.apepaterno,pe.apematerno) AS nombre, pe.status"
             + " FROM camiones.camiones c "
@@ -51,7 +51,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
             + " INNER JOIN camiones.operadores o ON o.unidad = c.unidad"
             + " LEFT JOIN bitacorasinhouse.operadores_secundarios_unidad os ON c.unidad = os.idunidad"
             + " LEFT JOIN personal.personal pe ON pe.idpersonal = os.idoperador AND pe.status = 1"
-            + " WHERE c.unidad = \"%s\" AND  u.tipounidad = %s ;');";
+            + " WHERE c.unidad = \"%s\" AND  u.tipounidad = %s  AND pe.status >= 0 ;');";
         
     
     static final String queryGetGuia =
