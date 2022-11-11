@@ -102,6 +102,21 @@ public class DocumentacionController {
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
       }
+    @GetMapping("/filterViajes/{table}/{idEsquema}/{idesquemagasto}/{tipounidad}/{tiporuta}/{idruta}/{idoficinadocumenta}")
+    public ResponseEntity<List<Viajes>> filterViajes(
+            @PathVariable("table") String table,
+            @PathVariable("idEsquema") int idEsquema,
+            @PathVariable("idesquemagasto") int idesquemagasto,
+            @PathVariable("tipounidad") int tipounidad,
+            @PathVariable("tiporuta") int tiporuta,
+            @PathVariable("idruta") int idruta,
+            @PathVariable("idoficinadocumenta") String idOficinaDocumenta
+            ) throws Exception{
+        List<Viajes> response = documentacionService.filterViajes(table, idEsquema, idesquemagasto, tipounidad, tiporuta, idruta, idOficinaDocumenta);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+      }
     
     @PostMapping("/insertGuia")
     public ResponseEntity<Guias> insertGuia(

@@ -66,7 +66,10 @@ public class DocumentacionRepository extends UtilitiesRepository{
           "SELECT * FROM OPENQUERY(%s, 'SELECT tipofolio, idfolio, clavefolio, descripcion FROM talones.foliosdos WHERE tipofolio = \"%s\" ;');";
     
     static final String queryFindFolioGuia =
-            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.`foliosguias` WHERE idfolio = \"%s\" ;');";
+            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.foliosguias WHERE idfolio = \"%s\" ;');";
+
+    static final String queryFilterViajes =
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tv.* FROM talones.viajes tv INNER JOIN talones.viajes_esquema_gasto tve ON tv.idviaje = tve.idviaje INNER JOIN talones.viajes_esquema_gasto tveg ON tv.idviaje = tveg.idviaje INNER JOIN talones.guiaviaje tgv ON tv.idviaje = tgv.idviaje INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia INNER JOIN talones.tg%s tgma ON tg.no_guia = tgma.no_guia INNER JOIN talones.talones tt ON tgma.cla_talon = tt.cla_talon INNER JOIN talones.especificacion_talon tet ON tgma.cla_talon =tet.cla_talon WHERE tet.idesquema = %s AND tev.idesquemagasto = %s AND tv.tipounidad = %s AND tv.tiporuta = %s AND tv.idruta = %s GROUP BY tv.idviaje ;');";
 
     /**
      * findTalones: Se consultan talones para documentacion de viaje .
@@ -259,6 +262,24 @@ public class DocumentacionRepository extends UtilitiesRepository{
           );
         
         return (Guias) query.getResultList().get(0);
+    }
+    
+    @SuppressWarnings("unchecked")
+    //idesquema %s AND tev.idesquemagasto = %s AND tv.tipounidad = %s AND tv.tiporuta = %s AND tv.idruta = %s
+    public List<Viajes> filterViajes(String table, int idEsquema, int idesquemagasto, int tipounidad, int tiporuta, int idruta, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(
+                queryFilterViajes,
+                table, 
+                idEsquema, 
+                idesquemagasto,
+                tipounidad,
+                tiporuta,
+                idruta,
+                linkedServer
+                ),Viajes.class
+          );
+        
+        return (List<Viajes>) query.getResultList();
     }
 
     

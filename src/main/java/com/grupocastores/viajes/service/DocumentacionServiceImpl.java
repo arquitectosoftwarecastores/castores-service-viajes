@@ -198,6 +198,15 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         return null;
     }
     
+    @Override
+    public List<Viajes> filterViajes (String table, int idEsquema, int idesquemagasto, int tipounidad,int tiporuta, int idruta, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        List<Viajes> response = documentacionRepository.filterViajes(table, idEsquema, idesquemagasto, tipounidad, tiporuta, idruta, DBPRUEBA);
+        if(response != null)
+            return response;
+        return null;
+    }
+    
     /**
      * getFolioViaje: Se consulta el proximo folio  de guia.
      * 
