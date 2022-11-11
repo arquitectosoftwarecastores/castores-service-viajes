@@ -22,7 +22,9 @@ import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
+import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Viajes;
 import com.grupocastores.viajes.service.IDocumentacionService;
 
@@ -118,6 +120,15 @@ public class DocumentacionController {
         return ResponseEntity.ok(response);
       }
     
+    @PostMapping("/insertGuiaViaje")
+    public ResponseEntity<Boolean> insertGuia(
+          @RequestBody Guiaviaje dataGuiaViaje) throws Exception{
+        Boolean response = documentacionService.insertGuiaViaje(dataGuiaViaje);
+      if (response == null)
+          return ResponseEntity.noContent().build();
+      return ResponseEntity.ok(response);
+    }
+    
     @PostMapping("/insertGuia")
     public ResponseEntity<Guias> insertGuia(
           @RequestBody Guias dataGuia) throws Exception{
@@ -199,6 +210,22 @@ public class DocumentacionController {
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
       }
+    
+    @GetMapping("/getRemolqueInterno/{idRemolque}/{idOficinaDocumenta}")
+    public ResponseEntity<List<RemolqueInternoCustom>> getRemolqueInterno(
+            @PathVariable("idRemolque") int idRemolque, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        List<RemolqueInternoCustom> remolque = documentacionService.getRemolqueInterno(idRemolque, idOficinaDocumenta);
+        return ResponseEntity.ok(remolque);
+    }
+    
+    @GetMapping("/getRemolqueExterno/{idRemolque}/{idOficinaDocumenta}")
+    public ResponseEntity<List<RemolqueInternoCustom>> getRqmolqueExterno(
+            @PathVariable("idRemolque") int idRemolque, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        List<RemolqueInternoCustom> folio = documentacionService.getRqmolqueExterno(idRemolque, idOficinaDocumenta);
+        return ResponseEntity.ok(folio);
+    }
+    
+    
     
     
       

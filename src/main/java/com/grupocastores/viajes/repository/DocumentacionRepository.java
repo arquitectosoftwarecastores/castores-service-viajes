@@ -17,6 +17,7 @@ import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
+import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Viajes;
@@ -69,7 +70,13 @@ public class DocumentacionRepository extends UtilitiesRepository{
             "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.foliosguias WHERE idfolio = \"%s\" ;');";
 
     static final String queryFilterViajes =
-            "SELECT * FROM OPENQUERY(%s, 'SELECT tv.* FROM talones.viajes tv INNER JOIN talones.viajes_esquema_gasto tve ON tv.idviaje = tve.idviaje INNER JOIN talones.viajes_esquema_gasto tveg ON tv.idviaje = tveg.idviaje INNER JOIN talones.guiaviaje tgv ON tv.idviaje = tgv.idviaje INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia INNER JOIN talones.tg%s tgma ON tg.no_guia = tgma.no_guia INNER JOIN talones.talones tt ON tgma.cla_talon = tt.cla_talon INNER JOIN talones.especificacion_talon tet ON tgma.cla_talon =tet.cla_talon WHERE tet.idesquema = %s AND tev.idesquemagasto = %s AND tv.tipounidad = %s AND tv.tiporuta = %s AND tv.idruta = %s GROUP BY tv.idviaje ;');";
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tv.* FROM talones.viajes tv INNER JOIN talones.viajes_esquema_gasto tve ON tv.idviaje = tve.idviaje INNER JOIN talones.viajes_esquema_gasto tveg ON tv.idviaje = tveg.idviaje INNER JOIN talones.guiaviaje tgv ON tv.idviaje = tgv.idviaje INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia INNER JOIN talones.tg%s tgma ON tg.no_guia = tgma.no_guia INNER JOIN talones.talones tt ON tgma.cla_talon = tt.cla_talon INNER JOIN talones.especificacion_talon tet ON tgma.cla_talon =tet.cla_talon WHERE tet.idesquema = %s AND tve.idesquemagasto = %s AND tv.tipounidad = %s AND tv.tiporuta = %s AND tv.idruta = %s GROUP BY tv.idviaje ;');";
+    
+    static final String queryGetRemolqueInterno =
+            "SELECT * FROM OPENQUERY(%s, 'select idremolque, placas from camiones.remolques rem where rem.`status` = 1 AND idremolque = %s ;');";
+    
+    static final String queryGetRemolqueExterno =
+            "SELECT * FROM OPENQUERY(%s, 'select idremolqueext AS idremolque, empresa AS placas from camiones.entradas_remolquesext ORDER BY fechamod DESC ;');";
 
     /**
      * findTalones: Se consultan talones para documentacion de viaje .
@@ -269,13 +276,13 @@ public class DocumentacionRepository extends UtilitiesRepository{
     public List<Viajes> filterViajes(String table, int idEsquema, int idesquemagasto, int tipounidad, int tiporuta, int idruta, String linkedServer) {
         Query query = entityManager.createNativeQuery(String.format(
                 queryFilterViajes,
+                linkedServer,
                 table, 
                 idEsquema, 
                 idesquemagasto,
                 tipounidad,
                 tiporuta,
-                idruta,
-                linkedServer
+                idruta
                 ),Viajes.class
           );
         
@@ -415,6 +422,32 @@ public class DocumentacionRepository extends UtilitiesRepository{
           );
       List<OperadorCustom> resultList = (List<OperadorCustom>) query.getResultList();
     return resultList;
+    }
+    
+    /**
+     * getRemolqueInterno: Obtiene remolques internos
+     * 
+     * @param idRemolque 
+     * @return List<RemolqueInternoCustom>
+     * @author OscarEduardo Guerra Salcedo [OscarGuerra]
+     * @date 2022-09-08
+     */
+    @SuppressWarnings("unchecked")
+    public List<RemolqueInternoCustom> getRemolqueInterno(int idRemolque, String dbprueba) {
+        Query query = entityManager.createNativeQuery(String.format(queryGetRemolqueInterno,
+                dbprueba,
+                idRemolque),
+                RemolqueInternoCustom.class
+          );
+       return ( List<RemolqueInternoCustom>) query.getResultList();
+    }
+
+    public List<RemolqueInternoCustom> getRemolqueExterno(int idRemolque, String dbprueba) {
+        Query query = entityManager.createNativeQuery(String.format(queryGetRemolqueExterno,
+                dbprueba),
+                RemolqueInternoCustom.class
+          );
+       return ( List<RemolqueInternoCustom>) query.getResultList();
     }
 
     

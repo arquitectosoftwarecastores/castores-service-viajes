@@ -11,6 +11,7 @@ import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
+import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Tg;
@@ -181,6 +182,10 @@ public interface IDocumentacionService {
     public DetaCo findDetacoSumatoria(String claTalon, String idOficinaDocumenta);
 
     public List<Viajes> filterViajes(String table, int idEsquema, int idesquemagasto, int tipounidad, int tiporuta, int idruta, String idOficinaDocumenta);
+
+    public List<RemolqueInternoCustom> getRemolqueInterno(int idRemolque, String idOficinaDocumenta);
+
+    public List<RemolqueInternoCustom> getRqmolqueExterno(int idFolio, String idOficinaDocumenta);
 
     
     

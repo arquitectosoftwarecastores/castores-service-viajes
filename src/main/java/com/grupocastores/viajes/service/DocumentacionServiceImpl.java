@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -15,6 +17,7 @@ import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
+import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
@@ -436,6 +439,33 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
        
        return documentacionRepository.getOperador(unidad, tipoUnidad);
        
+    }
+    
+    /**
+     * getRemolqueInterno: Obtiene remolques internos
+     * 
+     * @param idRemolque 
+     * @return List<RemolqueInternoCustom>
+     * @author OscarEduardo Guerra Salcedo [OscarGuerra]
+     * @date 2022-09-08
+     */
+    @Override
+    public List<RemolqueInternoCustom> getRemolqueInterno(int idRemolque, String idOficinaDocumenta) {
+        
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        List<RemolqueInternoCustom> list = documentacionRepository.getRemolqueInterno(idRemolque, DBPRUEBA);
+        if (list == null )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible obtener remolques internos");
+        return list;
+    }
+
+    @Override
+    public List<RemolqueInternoCustom> getRqmolqueExterno(int idRemolque, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        List<RemolqueInternoCustom> list = documentacionRepository.getRemolqueExterno(idRemolque, DBPRUEBA);
+        if (list == null )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible obtener remolques internos");
+        return list;
     }
 
 
