@@ -15,6 +15,7 @@ import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
+import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
@@ -363,6 +364,28 @@ public class DocumentacionRepository extends UtilitiesRepository{
            return false; 
         return true;  
     }
+    
+    /**
+     * insertImporteGuia: inserta importe de guia.
+     * 
+     * @param (Guias) dataViaje
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Guias
+     * @throws Exception 
+     * @date 2022-10-19
+     */
+    public Boolean insertImporteGuia(ImporteGuia dataImporte, String linkedServer) throws Exception{
+        System.out.println(dataImporte);
+        String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
+                + "'SELECT * "
+                + " FROM talones.importeguias LIMIT 1') VALUES('"+dataImporte.getNo_guia()+"', '"+dataImporte.getTotalflete()+"','"+dataImporte.getTotalseguro()+"','"+dataImporte.getTotalcapufe()+"','"+dataImporte.getTotalrecoleccion()+"','"+dataImporte.getTotalentrega()+"','"+dataImporte.getTotalmaniobras()+"','"+dataImporte.getTotalcdp()+"','"+dataImporte.getTotalferry()+"','"+dataImporte.getTotaldescuento()+"','"+dataImporte.getTotalolrvc()+"','"+dataImporte.getTotalotros()+"','"+dataImporte.getTotalgps()+"','"+dataImporte.getTotalsubtotal()+"','"+dataImporte.getTotaliva()+"','"+dataImporte.getTotalretencion()+"','"+dataImporte.getTotalotrasLineas()+"','"+dataImporte.getTotaltotal()+"','"+dataImporte.getTotalvalordeclarado()+"','"+dataImporte.getTotalbultos()+"','"+dataImporte.getTotalpeso()+"','"+dataImporte.getTotaldetalones()+"','"+dataImporte.getTotaldetalonesocurre()+"', '"+dataImporte.getEscompleto()+"')";
+        
+        System.out.println(queryCreateViajes);
+        if (executeStoredProcedure(queryCreateViajes) == false)
+           return false; 
+        return true;        
+    }
 
     @SuppressWarnings("unchecked")
     public List<OperadorCustom> getOperador(String unidad, int tipoUnidad) {
@@ -373,14 +396,6 @@ public class DocumentacionRepository extends UtilitiesRepository{
     return resultList;
     }
 
-    public boolean insertImporteguias(GuMesAnioCustom dataGuia, String linkedServer) {
-        String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
-                + " 'SELECT * FROM talones.gu%s LIMIT 1') VALUES('"+dataGuia.getNoGuia()+"', '"+dataGuia.getUnidad()+"','"+dataGuia.getPlacas()+"','"+dataGuia.getIdoperador()+"','"+dataGuia.getRemolque()+"','"+dataGuia.getOrigen()+"','"+dataGuia.getDestino()+"','"+dataGuia.getDespacho()+"','"+dataGuia.getIdpersonal()+"','"+dataGuia.getIdoficina()+"','"+dataGuia.getMoneda()+"','"+dataGuia.getConversion()+"','"+dataGuia.getFecha()+"','"+dataGuia.getHora()+"','"+dataGuia.getStatus()+"' )";
-        
-        if (executeStoredProcedure(queryCreateViajes) == false)
-           return false; 
-        return true;  
-    }
     
 
    

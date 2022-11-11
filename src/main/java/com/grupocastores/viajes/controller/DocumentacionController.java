@@ -20,6 +20,7 @@ import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
+import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Viajes;
@@ -145,6 +146,16 @@ public class DocumentacionController {
         if (!response)
           return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/insertImporteGuia/{idoficinaDocumenta}")
+    public ResponseEntity<Boolean> insertImporteGuia(
+        @PathVariable("idoficinaDocumenta") String idoficinaDocumenta,
+          @RequestBody ImporteGuia dataImporte) throws Exception{
+        Boolean response = documentacionService.insertImporteGuia(dataImporte, idoficinaDocumenta);
+        if (!response)
+            return ResponseEntity.noContent().build();
+          return ResponseEntity.ok(response);
     }
     
     @PutMapping("/updateGuMesAnio")

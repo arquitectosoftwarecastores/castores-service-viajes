@@ -1,7 +1,5 @@
 package com.grupocastores.viajes.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -9,14 +7,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
+import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
+import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Personal;
@@ -35,7 +34,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     private UtilitiesRepository utilitiesRepository;
     
     
-    public static final String DB = "TIJUANAPRUEBA";
+    public static final String DBPRUEBA = "TIJUANAPRUEBA";
 
     /**
      * findTalones: Se consultan talones para documentacion de viaje .
@@ -56,7 +55,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     public List<TalonCustomResponse> findTalones(String mesAnio, int idEsquema, int tipoViaje, int tipoUnidad, int idCliente, String idOficinaCliente, String idOficinaDocumenta, String determinanteOrigen, String determinanteDestino ) throws Exception {
            
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-        List<TalonCustomResponse> list = documentacionRepository.findTalones( mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino, DB);      
+        List<TalonCustomResponse> list = documentacionRepository.findTalones( mesAnio, idEsquema, tipoViaje, tipoUnidad, idCliente, idOficinaCliente, determinanteOrigen, determinanteDestino, DBPRUEBA);      
         return list;
        
     }
@@ -64,7 +63,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public DetaCo findDetacoSumatoria(String claTalon, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-        DetaCo list = documentacionRepository.findDetacoSumatoria( claTalon, DB);      
+        DetaCo list = documentacionRepository.findDetacoSumatoria( claTalon, DBPRUEBA);      
         return list;
     }
 
@@ -82,7 +81,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public FolioDos getFolioViaje(int idFolio, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-        FolioDos response = documentacionRepository.getFolioViaje(idFolio, DB);  
+        FolioDos response = documentacionRepository.getFolioViaje(idFolio, DBPRUEBA);  
       
         // TODO Auto-generated method stub
         return response;
@@ -128,11 +127,14 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         
         Servidores server = utilitiesRepository.getLinkedServerByOfice("1144");
         FolioDos folioViaje = getFolioViaje(1, dataViaje.getIdoficina());
+        Personal personal = utilitiesRepository.getPersonalByIdUsuario(dataViaje.getIdpersonal());
+        int idPersonal = personal.getIdpersonal();
+        dataViaje.setIdpersonal(idPersonal);
         dataViaje.setIdviaje(folioViaje.getIdfolio());
         dataViaje.setFolio(folioViaje.getClavefolio());
-        boolean inserted = documentacionRepository.insertViaje(dataViaje, DB);
+        boolean inserted = documentacionRepository.insertViaje(dataViaje, DBPRUEBA);
         if(inserted) {
-            updateFolioViaje(folioViaje.getIdfolio(),folioViaje.getClavefolio(), DB);
+            updateFolioViaje(folioViaje.getIdfolio(),folioViaje.getClavefolio(), DBPRUEBA);
             return dataViaje;
         }
         return null;
@@ -180,7 +182,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         viaje.setGdieselporofidest(dataViaje.getGdieselporofidest());
         viaje.setCasetasporofidest(dataViaje.getCasetasporofidest());
      
-        boolean inserted = documentacionRepository.updateViajes(dataViaje, DB);
+        boolean inserted = documentacionRepository.updateViajes(dataViaje, DBPRUEBA);
         if(inserted) {
             return dataViaje;
         }
@@ -190,7 +192,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public Viajes getViaje(long idViaje, String idOficina) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice("1144");
-        Viajes response = documentacionRepository.getViaje(idViaje, idOficina, DB);
+        Viajes response = documentacionRepository.getViaje(idViaje, idOficina, DBPRUEBA);
         if(response != null)
             return response;
         return null;
@@ -210,7 +212,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public FoliosGuias getFolioGuia(int idFolio, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-        FoliosGuias response = documentacionRepository.getFolioGuia(idFolio, DB);  
+        FoliosGuias response = documentacionRepository.getFolioGuia(idFolio, DBPRUEBA);  
       
         return response;
     }
@@ -234,7 +236,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         String newNoFolioGuia = Integer.toString(Integer.valueOf(oldNoFolioGuia) + 1) ;
         String nextClaveFolio = StringUtils.leftPad(newNoFolioGuia, 7, "0");
         nextClaveFolio = idOficina.concat(nextClaveFolio);
-        boolean response = documentacionRepository.updateFolioGuia(nextClaveFolio, DB); 
+        boolean response = documentacionRepository.updateFolioGuia(nextClaveFolio, DBPRUEBA); 
         return response;
     }
     
@@ -252,14 +254,39 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     public Guias insertGuia(Guias dataGuia) throws Exception {
         
         Servidores server = utilitiesRepository.getLinkedServerByOfice(dataGuia.getIdoficina());
-        boolean inserted = documentacionRepository.insertGuia(dataGuia, DB);
+        boolean inserted = documentacionRepository.insertGuia(dataGuia, DBPRUEBA);
         
         if(inserted) {
-            updateFolioGuia(dataGuia.getNoGuia(), DB);
+            updateFolioGuia(dataGuia.getNoGuia(), DBPRUEBA);
             return dataGuia;
         }
         return null;
     }
+    
+    /**
+     * insertImporteGuia: inserta importe de guia.
+     * 
+     * @param (ImporteGuiaCustom) dataImporte
+     * @param (String) idoficinaDocumenta
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-11-08
+     */
+    @Override
+    public Boolean insertImporteGuia(ImporteGuia dataImporte, String idoficinaDocumenta ) throws Exception {
+        
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idoficinaDocumenta);
+        boolean inserted = documentacionRepository.insertImporteGuia(dataImporte, DBPRUEBA);
+        System.out.println(inserted);
+        if(inserted) {
+          
+            return inserted;
+        }
+        return false;
+    }
+    
     
     /**
      * insertTalonGuia: inserta detalle de talonguia.
@@ -286,7 +313,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         dataGuia.forEach(item -> {
             
             try {
-              boolean response = documentacionRepository.insertTalonGuia(item, mesAnio, DB);
+              boolean response = documentacionRepository.insertTalonGuia(item, mesAnio, DBPRUEBA);
               if(!response) {
                   throw new Exception("No fue posible agregar la guia: "+item.getNoGuia() + " Y talon"+item.getClaTalon());
               }
@@ -315,7 +342,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         Personal personal = utilitiesRepository.getPersonalByIdUsuario(dataViajeGuia.getIdpersonal());
         int idPersonal = personal.getIdpersonal();
         dataViajeGuia.setIdpersonal(idPersonal);   
-        boolean response = documentacionRepository.insertGuiaViaje(dataViajeGuia, DB);
+        boolean response = documentacionRepository.insertGuiaViaje(dataViajeGuia, DBPRUEBA);
         if(!response)
            return false;
         return true;
@@ -332,7 +359,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         guia.setFechamod(dataGuia.getFechamod());
         guia.setHoramod(dataGuia.getHoramod());
       
-        boolean inserted = documentacionRepository.updateGuia(guia, DB);
+        boolean inserted = documentacionRepository.updateGuia(guia, DBPRUEBA);
         if(inserted) {
             return guia;
         }
@@ -342,7 +369,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public Guias getGuia(String noGuia, String tabla) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice("1144");
-        Guias response = documentacionRepository.getGuia(noGuia, tabla, DB);
+        Guias response = documentacionRepository.getGuia(noGuia, tabla, DBPRUEBA);
         if(response != null)
             return response;
         return null;
@@ -351,7 +378,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public Boolean insertGuMesAnio(GuMesAnioCustom dataGuia) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice("1144");
-        boolean inserted = documentacionRepository.insertGuMesAnio(dataGuia, DB);
+        boolean inserted = documentacionRepository.insertGuMesAnio(dataGuia, DBPRUEBA);
         if(inserted) {
             return inserted;
         }
@@ -380,7 +407,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         guMesAnio.setFecha(dataGuiaMesAnio.getFecha());
         guMesAnio.setHora(dataGuiaMesAnio.getHora());
         guMesAnio.setStatus(dataGuiaMesAnio.getStatus());
-        Boolean response = documentacionRepository.updateGuMesAnio(guMesAnio,dataGuiaMesAnio.getTabla(), DB);
+        Boolean response = documentacionRepository.updateGuMesAnio(guMesAnio,dataGuiaMesAnio.getTabla(), DBPRUEBA);
         if(response != null)
             return response;
         return null;
@@ -389,7 +416,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public GuMesAnio getGuMesAnio(String noGuia, String tabla, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-        GuMesAnio response = documentacionRepository.getGuMesAnio(noGuia,tabla, DB);
+        GuMesAnio response = documentacionRepository.getGuMesAnio(noGuia,tabla, DBPRUEBA);
         if(response != null)
             return response;
         return null;

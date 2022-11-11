@@ -9,6 +9,7 @@ import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
 import com.grupocastores.commons.inhouse.Guias;
+import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
@@ -73,6 +74,19 @@ public interface IDocumentacionService {
      * @date 2022-10-18
      */
     public Guias insertGuia(Guias dataViaje) throws Exception;
+    
+    /**
+     * insertImporteGuia: inserta importe de guia.
+     * 
+     * @param (ImporteGuiaCustom) dataImporte
+     * @param (String) idoficinaDocumenta
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-11-08
+     */
+    Boolean insertImporteGuia(ImporteGuia dataImporte, String idoficinaDocumenta) throws Exception;
     
     /**
      * getFolioViaje: Se consulta el proximo folio  de guia.
@@ -165,6 +179,8 @@ public interface IDocumentacionService {
     public List<OperadorCustom> getOperador(String unidad, int tipoUnidad);
 
     public DetaCo findDetacoSumatoria(String claTalon, String idOficinaDocumenta);
+
+    
     
 
 }
