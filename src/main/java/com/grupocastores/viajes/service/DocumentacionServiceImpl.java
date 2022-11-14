@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.grupocastores.commons.inhouse.DetaCo;
+import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -458,7 +459,15 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible obtener remolques internos");
         return list;
     }
-
+    
+    /**
+     * getRqmolqueExterno: Obtiene remolques externos
+     * 
+     * @param idRemolque 
+     * @return List<RemolqueInternoCustom>
+     * @author OscarEduardo Guerra Salcedo [OscarGuerra]
+     * @date 2022-09-08
+     */
     @Override
     public List<RemolqueInternoCustom> getRqmolqueExterno(int idRemolque, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
@@ -466,6 +475,21 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         if (list == null )
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible obtener remolques internos");
         return list;
+    }
+
+    /**
+     * getEspecificacionTalon: Obtiene especificacion de talon 
+     * 
+     * @param claTalon
+     * @param idOficinaDocumenta
+     * @return EspecificacionTalon
+     * @author OscarEduardo Guerra Salcedo [OscarGuerra]
+     * @date 2022-11-14
+     */
+    @Override
+    public EspecificacionTalon getEspecificacionTalon(String claTalon, String idOficinaDocumenta) {
+        
+        return null;
     }
 
 

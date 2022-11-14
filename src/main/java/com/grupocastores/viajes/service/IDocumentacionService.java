@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.DetaCo;
+import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -186,6 +187,8 @@ public interface IDocumentacionService {
     public List<RemolqueInternoCustom> getRemolqueInterno(int idRemolque, String idOficinaDocumenta);
 
     public List<RemolqueInternoCustom> getRqmolqueExterno(int idFolio, String idOficinaDocumenta);
+
+    public EspecificacionTalon getEspecificacionTalon(String claTalon, String idOficinaDocumenta);
 
     
     

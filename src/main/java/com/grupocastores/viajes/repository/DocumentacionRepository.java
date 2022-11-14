@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.DetaCo;
+import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -34,9 +35,12 @@ public class DocumentacionRepository extends UtilitiesRepository{
     static final String queryFindTalones =
             "SELECT * FROM OPENQUERY(%s, ' SELECT * FROM ( SELECT tr.cla_talon AS clatalon, tr.nomorigen, tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina, tr.importeseguro,tr.recoleccion, tr.entrega, tr.maniobras, tr.ferry, tr.revac, tr.otroscargos, tr.gps, tr.importesubtotal, tr.importeiva, tr.importeiva_ret AS importeivaret,tr.otras_lineas AS otraslineas, tr.importetotal, tr.val_decl AS valdecl FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon INNER JOIN talones.ajustesgenerales taj ON  (tr.idofirte = taj.idlugarorigen OR tr.idofirte = taj.oficinaajusta) AND (tr.idofidest = taj.idlugardestino OR tr.idofidest = taj.oficinaajusta) WHERE tr.idclasificaciondoc = 2 AND tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\" AND tr.idcdrec IN (%s) AND tr.idcddes IN (%s)  ORDER BY taj.porcentaje DESC ) AS tem GROUP BY tem.clatalon');";
     
+    static final String queryGetEspecificacionTalon =
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tr.cla_talon AS claTalon, tet.idesquema, tr.tipounidad FROM talones.tr%s tr INNER JOIN talones.especificacion_talon tet ON tr.cla_talon = tet.cla_talon WHERE tr.tp_dc = 1 AND tr.cla_talonSELECT tr.cla_talon AS claTalon, tet.idesquema, tr.tipounidad FROM talones.tr%s tr INNER JOIN talones.especificacion_talon tet ON tr.cla_talon = tet.cla_talon WHERE tr.tp_dc = 1 AND tr.cla_talon = \"%s\";');";
+    
     static final String queryDetaCoSumatoria =
              "SELECT * FROM OPENQUERY(%s, ' SELECT cla_talon AS clatalon,SUM(bultos) AS bultos, empaque, que_contiene AS quecontiene, SUM(peso_total) AS pesototal, SUM(flete) AS flete, idpromocion, preciopromocion, preciosinpromocion  FROM talones.detaco where cla_talon = \"%s\" GROUP BY cla_talon');";
-           
+    
     static final String queryGetViaje =
              "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.viajes v WHERE v.idviaje = %s AND v.idoficina = \"%s\";');";
     
@@ -233,7 +237,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
      * @date 2022-10-19
      */
     public Boolean insertGuia(Guias dataGuia, String linkedServer) throws Exception{
-        String queryCreateViajes ="INSERT INTO OPENQUERY("+ DB_23 +", "
+        String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
                 + "'SELECT no_guia As noGuia, tabla, status, idoficina, fechamod, horamod"
                 + " FROM talones.guias LIMIT 1') VALUES('"+dataGuia.getNoGuia()+"', '"+dataGuia.getTabla()+"','"+dataGuia.getStatus()+"','"+dataGuia.getIdoficina()+"','"+dataGuia.getFechamod()+"','"+dataGuia.getHoramod()+"')";
         
@@ -433,23 +437,50 @@ public class DocumentacionRepository extends UtilitiesRepository{
      * @date 2022-09-08
      */
     @SuppressWarnings("unchecked")
-    public List<RemolqueInternoCustom> getRemolqueInterno(int idRemolque, String dbprueba) {
+    public List<RemolqueInternoCustom> getRemolqueInterno(int idRemolque, String linkedServer) {
         Query query = entityManager.createNativeQuery(String.format(queryGetRemolqueInterno,
-                dbprueba,
+                linkedServer,
                 idRemolque),
                 RemolqueInternoCustom.class
           );
        return ( List<RemolqueInternoCustom>) query.getResultList();
     }
-
-    public List<RemolqueInternoCustom> getRemolqueExterno(int idRemolque, String dbprueba) {
+    
+    /**
+     * getRqmolqueExterno: Obtiene remolques externos
+     * 
+     * @param idRemolque 
+     * @return List<RemolqueInternoCustom>
+     * @author OscarEduardo Guerra Salcedo [OscarGuerra]
+     * @date 2022-09-08
+     */
+    public List<RemolqueInternoCustom> getRemolqueExterno(int idRemolque, String linkedServer) {
         Query query = entityManager.createNativeQuery(String.format(queryGetRemolqueExterno,
-                dbprueba),
+                linkedServer),
                 RemolqueInternoCustom.class
           );
        return ( List<RemolqueInternoCustom>) query.getResultList();
     }
-
+    
+    /**
+     * getEspecificacionTalon: Obtiene especificacion de talon 
+     * 
+     * @param claTalon
+     * @param idOficinaDocumenta
+     * @return EspecificacionTalon
+     * @author OscarEduardo Guerra Salcedo [OscarGuerra]
+     * @date 2022-11-14
+     */
+    public EspecificacionTalon getRemolqueExterno(String claTalon, String mesanio, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(queryGetEspecificacionTalon,
+                linkedServer,
+                mesanio,
+                claTalon
+                ),
+                EspecificacionTalon.class
+          );
+       return (EspecificacionTalon) query.getResultList();
+    }
     
 
    

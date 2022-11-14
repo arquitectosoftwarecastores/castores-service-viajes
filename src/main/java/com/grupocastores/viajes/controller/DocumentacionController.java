@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.DetaCo;
+import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
@@ -225,7 +226,12 @@ public class DocumentacionController {
         return ResponseEntity.ok(folio);
     }
     
-    
+    @GetMapping("/getEspecificacionTalon/{claTalon}/{idOficinaDocumenta}")
+    public ResponseEntity<EspecificacionTalon> getEspecificacionTalon(
+            @PathVariable("claTalon") String claTalon, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        EspecificacionTalon especificacion = documentacionService.getEspecificacionTalon(claTalon, idOficinaDocumenta);
+        return ResponseEntity.ok(especificacion);
+    }
     
     
       
