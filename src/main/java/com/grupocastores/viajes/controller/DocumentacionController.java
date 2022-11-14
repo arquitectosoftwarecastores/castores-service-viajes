@@ -24,8 +24,10 @@ import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
+import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
+import com.grupocastores.commons.oficinas.Talones;
 import com.grupocastores.commons.oficinas.Viajes;
 import com.grupocastores.viajes.service.IDocumentacionService;
 
@@ -170,7 +172,7 @@ public class DocumentacionController {
     public ResponseEntity<Boolean> insertGuMesAnio(
           @RequestBody GuMesAnioCustom dataGuiaMesAnio) throws Exception{
         Boolean response = documentacionService.insertGuMesAnio(dataGuiaMesAnio);
-        if (!response)
+        if (response)
           return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
     }
@@ -233,6 +235,12 @@ public class DocumentacionController {
         return ResponseEntity.ok(especificacion);
     }
     
+    @GetMapping("/getTablaTalon/{claTalon}/{idOficinaDocumenta}")
+    public ResponseEntity<TablaTalonesOficina> getTablaTalon(
+            @PathVariable("claTalon") String claTalon, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        TablaTalonesOficina especificacion = documentacionService.getTablaTalon(claTalon, idOficinaDocumenta);
+        return ResponseEntity.ok(especificacion);
+    }
     
       
 }

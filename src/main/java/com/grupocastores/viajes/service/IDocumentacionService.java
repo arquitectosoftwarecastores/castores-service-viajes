@@ -13,8 +13,10 @@ import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
+import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
+import com.grupocastores.commons.oficinas.Talones;
 import com.grupocastores.commons.oficinas.Tg;
 import com.grupocastores.commons.oficinas.Viajes;
 
@@ -189,6 +191,8 @@ public interface IDocumentacionService {
     public List<RemolqueInternoCustom> getRqmolqueExterno(int idFolio, String idOficinaDocumenta);
 
     public EspecificacionTalon getEspecificacionTalon(String claTalon, String idOficinaDocumenta);
+
+    public TablaTalonesOficina getTablaTalon(String claTalon, String idOficinaDocumenta);
 
     
     

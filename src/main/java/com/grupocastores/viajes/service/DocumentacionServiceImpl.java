@@ -19,11 +19,13 @@ import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
+import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.TgCustom;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Personal;
 import com.grupocastores.commons.oficinas.Servidores;
+import com.grupocastores.commons.oficinas.Talones;
 import com.grupocastores.commons.oficinas.Viajes;
 import com.grupocastores.viajes.repository.DocumentacionRepository;
 import com.grupocastores.viajes.repository.UtilitiesRepository;
@@ -395,7 +397,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         if(inserted) {
             return inserted;
         }
-        return null;
+        return false;
     }
 
     @Override
@@ -488,8 +490,30 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
      */
     @Override
     public EspecificacionTalon getEspecificacionTalon(String claTalon, String idOficinaDocumenta) {
-        
-        return null;
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        TablaTalonesOficina talon = getTablaTalon(claTalon, idOficinaDocumenta);
+        EspecificacionTalon espec = documentacionRepository.getEspecificacionTalon(claTalon, talon.getTabla(), DBPRUEBA);
+        if (espec == null )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible obtener especificacion de talon");
+        return espec;
+    }
+
+    /**
+     * getTablaTalon: Obtiene la tabla y registro de talon 
+     * 
+     * @param claTalon
+     * @param idOficinaDocumenta
+     * @return Talones
+     * @author OscarEduardo Guerra Salcedo [OscarGuerra]
+     * @date 2022-11-14
+     */
+    @Override
+    public TablaTalonesOficina getTablaTalon(String claTalon, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        TablaTalonesOficina talon = documentacionRepository.getTablaTalon(claTalon, DBPRUEBA);
+        if (talon == null )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible la tabla del talon");
+        return talon;
     }
 
 
