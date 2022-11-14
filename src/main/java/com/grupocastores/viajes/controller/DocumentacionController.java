@@ -172,7 +172,7 @@ public class DocumentacionController {
     public ResponseEntity<Boolean> insertGuMesAnio(
           @RequestBody GuMesAnioCustom dataGuiaMesAnio) throws Exception{
         Boolean response = documentacionService.insertGuMesAnio(dataGuiaMesAnio);
-        if (response)
+        if (!response)
           return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
     }
