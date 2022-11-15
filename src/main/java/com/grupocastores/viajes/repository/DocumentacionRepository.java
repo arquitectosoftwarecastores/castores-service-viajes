@@ -38,7 +38,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
             "SELECT * FROM OPENQUERY(%s, ' SELECT * FROM ( SELECT tr.cla_talon AS clatalon, tr.nomorigen, tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina, tr.importeseguro,tr.recoleccion, tr.entrega, tr.maniobras, tr.ferry, tr.revac, tr.otroscargos, tr.gps, tr.importesubtotal, tr.importeiva, tr.importeiva_ret AS importeivaret,tr.otras_lineas AS otraslineas, tr.importetotal, tr.val_decl AS valdecl FROM talones.tr%s tr  INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon INNER JOIN talones.ajustesgenerales taj ON  (tr.idofirte = taj.idlugarorigen OR tr.idofirte = taj.oficinaajusta) AND (tr.idofidest = taj.idlugardestino OR tr.idofidest = taj.oficinaajusta) WHERE tr.idclasificaciondoc = 2 AND tr.no_guia IS NULL AND tr.tipounidad = %s AND et.idesquema = %s AND et.idcliente = %s AND et.idoficina = \"%s\" AND tr.idcdrec IN (%s) AND tr.idcddes IN (%s)  ORDER BY taj.porcentaje DESC ) AS tem GROUP BY tem.clatalon');";
     
     static final String queryGetEspecificacionTalon =
-            "SELECT * FROM OPENQUERY(%s, 'SELECT tr.cla_talon, tet.idesquema, tr.tipounidad FROM talones.tr%s tr INNER JOIN talones.especificacion_talon tet ON tr.cla_talon = tet.cla_talon WHERE tr.tp_dc = 1 AND tr.no_guia IS NULL  AND tr.cla_talon = \"%s\";');";
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tr.cla_talon, tet.idesquema, tr.tipounidad, tr.idcddes, tr.idcdrec FROM talones.tr%s tr INNER JOIN talones.especificacion_talon tet ON tr.cla_talon = tet.cla_talon WHERE tr.tp_dc = 1 AND tr.no_guia IS NULL  AND tr.cla_talon = \"%s\";');";
     
     static final String queryGetTablaTalon =
             "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.talones t WHERE t.cla_talon = \"%s\";');";
@@ -396,7 +396,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
 
     public boolean insertGuMesAnio(GuMesAnioCustom dataGuia, String linkedServer) {
         String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
-                + " 'SELECT * FROM talones.gu"+dataGuia.getTabla()+" LIMIT 1') VALUES('"+dataGuia.getNoGuia()+"', '"+dataGuia.getUnidad()+"','"+dataGuia.getPlacas()+"','"+dataGuia.getIdoperador()+"','"+dataGuia.getRemolque()+"','"+dataGuia.getOrigen()+"','"+dataGuia.getDestino()+"','"+dataGuia.getDespacho()+"','"+dataGuia.getIdpersonal()+"','"+dataGuia.getIdoficina()+"','"+dataGuia.getMoneda()+"','"+dataGuia.getConversion()+"','"+dataGuia.getFecha()+"','"+dataGuia.getHora()+"','"+dataGuia.getStatus()+"' )";
+                + " 'SELECT * FROM talones.gu"+dataGuia.getTabla()+" LIMIT 1') VALUES('"+dataGuia.getNoGuia()+"', '"+dataGuia.getUnidad()+"','"+dataGuia.getPlacas()+"','"+dataGuia.getIdoperador()+"','"+dataGuia.getRemolque()+"','"+dataGuia.getOrigen()+"','"+dataGuia.getDestino()+"','"+dataGuia.getDespacho()+"','"+dataGuia.getIdpersonal()+"','"+dataGuia.getIdoficina()+"','"+dataGuia.getMoneda()+"','"+dataGuia.getConversion()+"','"+dataGuia.getFecha()+"','"+dataGuia.getHora()+"','"+dataGuia.getStatus()+"','"+dataGuia.getIdcliente()+"','"+dataGuia.getIdproducto()+"','"+dataGuia.getCita()+"','"+dataGuia.getTipounidad()+"' )";
         
         if (executeStoredProcedure(queryCreateViajes) == false)
            return false; 
