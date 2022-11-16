@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
+import com.grupocastores.commons.ViajeEsquemaGasto;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -227,9 +228,19 @@ public class DocumentacionRepository extends UtilitiesRepository{
                 idViaje, idOficina),Viajes.class
           );
         
-       Viajes viaje = (Viajes) query.getResultList().get(0);
+      Viajes viaje = (Viajes) query.getResultList().get(0);
       return viaje; 
       
+    }
+    
+    public boolean insertViajeEsquema(ViajeEsquemaGasto dataViajeEsquema, String linkedServer) {
+        String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
+                + "'SELECT idviaje, idesquemagasto"
+                + " FROM talones.viajes_esquema_gasto LIMIT 1') VALUES('"+dataViajeEsquema.getIdviaje()+"', '"+dataViajeEsquema.getIdesquemagasto()+"')";
+        
+        if (executeStoredProcedure(queryCreateViajes) == false)
+           return false; 
+        return true;    
     }
     
     /**
@@ -341,10 +352,10 @@ public class DocumentacionRepository extends UtilitiesRepository{
     /**
      * insertTalonGuia: inserta detalle de talon guia.
      * 
-     * @param (Viajes) dataViaje
+     * @param (TgCustom) dataGuia
      * @version 0.0.1
      * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
-     * @return dataViaje Viajes
+     * @return Boolean
      * @throws Exception 
      * @date 2022-10-18
      */
@@ -353,6 +364,48 @@ public class DocumentacionRepository extends UtilitiesRepository{
         String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
                 + "' SELECT * FROM talones.tg"+mesAnio+" LIMIT 1') VALUES('"+dataGuia.getClaTalon()+"', '"+dataGuia.getNoGuia()+"' ,'"+dataGuia.getNorenglon()+"')";
         
+        if (executeStoredProcedure(queryCreateViajes) == false)
+           return false; 
+        return true;
+    }
+    
+    /**
+     * insertComplementoCpRemolque: inserta detalle de talon guia.
+     * 
+     * @param (TgCustom) dataGuia
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-10-18
+     */
+    @SuppressWarnings("unchecked")
+    public Boolean insertComplementoCpRemolque(TgCustom dataGuia, String mesAnio, String linkedServer) throws Exception{
+        String queryCreateViajes ="INSERT INTO OPENQUERY("+ linkedServer +", "
+                + "' SELECT * FROM talones.tg"+mesAnio+" LIMIT 1') VALUES('"+dataGuia.getClaTalon()+"', '"+dataGuia.getNoGuia()+"' ,'"+dataGuia.getNorenglon()+"')";
+        
+        if (executeStoredProcedure(queryCreateViajes) == false)
+           return false; 
+        return true;
+    }
+    
+    
+    /**
+     * updateTr: actualiza tabla tr
+     * Si se van necesitando mas campos agregarlos por favor y actualizar los argumentos de los metodos o generar una entidad.
+     * 
+     * @param  GuMesAnio 
+     * @param tabla
+     * @param linkedServer
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-10-21
+     */
+    public Boolean updateTr(String claTalon, String tabla, String noGuia, String linkedServer) {
+        String queryCreateViajes = "EXEC ('UPDATE talones.tr"+tabla+" SET no_guia = \""+noGuia+"\"  WHERE cla_talon = \""+claTalon+"\"  ') AT "+ linkedServer +";";
+
         if (executeStoredProcedure(queryCreateViajes) == false)
            return false; 
         return true;
@@ -376,7 +429,19 @@ public class DocumentacionRepository extends UtilitiesRepository{
            return false; 
         return true;
     }
-
+    
+    /**
+     * updateGuMesAnio: actualiza tabla gumesanio.
+     * 
+     * @param  GuMesAnio 
+     * @param tabla
+     * @param linkedServer
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Boolean
+     * @throws Exception 
+     * @date 2022-10-21
+     */
     public Boolean updateGuMesAnio(GuMesAnio dataGuiaMesAnio,String tabla, String linkedServer) {
        String queryCreateViajes = "EXEC ('UPDATE talones.gu"+tabla+" SET no_guia = \""+dataGuiaMesAnio.getNoGuia()+"\", unidad = \""+dataGuiaMesAnio.getUnidad()+"\" , placas =\""+dataGuiaMesAnio.getPlacas()+"\", idoperador = \""+dataGuiaMesAnio.getIdoperador()+"\", remolque = \""+dataGuiaMesAnio.getRemolque()+"\", origen = \""+dataGuiaMesAnio.getOrigen()+"\", destino = \""+dataGuiaMesAnio.getDestino()+"\", despacho = \""+dataGuiaMesAnio.getDespacho()+"\", idpersonal = \""+dataGuiaMesAnio.getIdpersonal()+"\", idoficina =\""+dataGuiaMesAnio.getIdoficina()+"\", moneda = \""+dataGuiaMesAnio.getMoneda()+"\", conversion = \""+dataGuiaMesAnio.getConversion()+"\", fecha = \""+dataGuiaMesAnio.getFecha()+"\", hora = \""+dataGuiaMesAnio.getHora()+"\", status = \""+dataGuiaMesAnio.getStatus()+"\"   WHERE no_guia = \""+dataGuiaMesAnio.getNoGuia()+"\"  ') AT "+ linkedServer +";";
         
@@ -510,6 +575,8 @@ public class DocumentacionRepository extends UtilitiesRepository{
         return resultList;
       
     }
+
+   
     
 
    

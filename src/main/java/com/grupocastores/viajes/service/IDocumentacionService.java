@@ -3,6 +3,7 @@ package com.grupocastores.viajes.service;
 import java.util.List;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
+import com.grupocastores.commons.ViajeEsquemaGasto;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -193,6 +194,8 @@ public interface IDocumentacionService {
     public EspecificacionTalon getEspecificacionTalon(String claTalon, String idOficinaDocumenta);
 
     public TablaTalonesOficina getTablaTalon(String claTalon, String idOficinaDocumenta);
+
+    public Boolean insertViajeEsquema(ViajeEsquemaGasto dataViajeEsquema, String idoficinaDocumenta) throws Exception;
 
     
     

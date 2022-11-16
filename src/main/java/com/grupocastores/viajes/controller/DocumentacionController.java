@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
+import com.grupocastores.commons.ViajeEsquemaGasto;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -92,7 +93,7 @@ public class DocumentacionController {
     }
     @PutMapping("/updateViaje")
     public ResponseEntity<Viajes> updateViajes(
-            @RequestBody Viajes dataViaje) throws Exception{
+        @RequestBody Viajes dataViaje) throws Exception{
         Viajes response = documentacionService.updateViajes(dataViaje);
         if (response == null)
             return ResponseEntity.noContent().build();
@@ -106,7 +107,18 @@ public class DocumentacionController {
         if (response == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
-      }
+    }
+    
+    @PostMapping("/insertViajeEsquema")
+    public ResponseEntity<Boolean> insertViajeEsquema(
+          @RequestBody ViajeEsquemaGasto dataViajeEsquema,
+          @RequestParam String idOficinaDocumenta) throws Exception{
+        Boolean response = documentacionService.insertViajeEsquema(dataViajeEsquema, idOficinaDocumenta);
+      if (!response)
+          return ResponseEntity.noContent().build();
+      return ResponseEntity.ok(response);
+    }
+    
     @GetMapping("/filterViajes/{table}/{idEsquema}/{idesquemagasto}/{tipounidad}/{tiporuta}/{idruta}/{idoficinadocumenta}")
     public ResponseEntity<List<Viajes>> filterViajes(
             @PathVariable("table") String table,

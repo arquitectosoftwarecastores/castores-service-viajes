@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.grupocastores.commons.ViajeEsquemaGasto;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -205,6 +206,17 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     }
     
     @Override
+    public Boolean insertViajeEsquema(ViajeEsquemaGasto dataViajeEsquema,String idoficinaDocumenta) throws Exception {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idoficinaDocumenta);
+        boolean inserted = documentacionRepository.insertViajeEsquema(dataViajeEsquema, DBPRUEBA);
+        
+        if(inserted) {
+            return inserted;
+        }
+        throw new Exception("No fue posible insertar esquema de gasto");
+    }
+    
+    @Override
     public List<Viajes> filterViajes (String table, int idEsquema, int idesquemagasto, int tipounidad,int tiporuta, int idruta, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
         List<Viajes> response = documentacionRepository.filterViajes(table, idEsquema, idesquemagasto, tipounidad, tiporuta, idruta, DBPRUEBA);
@@ -294,7 +306,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idoficinaDocumenta);
         boolean inserted = documentacionRepository.insertImporteGuia(dataImporte, DBPRUEBA);
-        System.out.println(inserted);
+
         if(inserted) {
           
             return inserted;
@@ -330,6 +342,9 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
             try {
               boolean response = documentacionRepository.insertTalonGuia(item, mesAnio, DBPRUEBA);
               if(!response) {
+                  
+                  TablaTalonesOficina talon = getTablaTalon(item.getClaTalon(), item.getIdOficinaDocumenta());
+                  documentacionRepository.updateTr(item.getClaTalon(), talon.getTabla(), item.getNoGuia(), item.getIdOficinaDocumenta());
                   throw new Exception("No fue posible agregar la guia: "+item.getNoGuia() + " Y talon"+item.getClaTalon());
               }
             } catch (Exception e) {
@@ -515,6 +530,8 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible la tabla del talon");
         return talon;
     }
+
+   
 
 
 
