@@ -111,10 +111,10 @@ public class DocumentacionController {
         return ResponseEntity.ok(response);
     }
     
-    @PostMapping("/insertViajeEsquema")
+    @PostMapping("/insertViajeEsquema/{idOficinaDocumenta}")
     public ResponseEntity<Boolean> insertViajeEsquema(
           @RequestBody ViajeEsquemaGasto dataViajeEsquema,
-          @RequestParam String idOficinaDocumenta) throws Exception{
+          @PathVariable String idOficinaDocumenta) throws Exception{
         Boolean response = documentacionService.insertViajeEsquema(dataViajeEsquema, idOficinaDocumenta);
       if (!response)
           return ResponseEntity.noContent().build();
