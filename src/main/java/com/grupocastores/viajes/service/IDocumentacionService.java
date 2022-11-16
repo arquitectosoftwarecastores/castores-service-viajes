@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.ViajeEsquemaGasto;
+import com.grupocastores.commons.inhouse.CcpRemolque;
+import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -196,6 +198,10 @@ public interface IDocumentacionService {
     public TablaTalonesOficina getTablaTalon(String claTalon, String idOficinaDocumenta);
 
     public Boolean insertViajeEsquema(ViajeEsquemaGasto dataViajeEsquema, String idoficinaDocumenta) throws Exception;
+
+    public Boolean insertCcpRemolque(CcpRemolque dataRemolque, String idoficinaDocumenta) throws Exception;
+
+    public Boolean insertCcpRemolqueExterno(CcpRemolqueExterno dataRemolque, String idoficinaDocumenta) throws Exception;
 
     
     

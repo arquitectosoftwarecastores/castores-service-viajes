@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.ViajeEsquemaGasto;
+import com.grupocastores.commons.inhouse.CcpRemolque;
+import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -254,5 +256,24 @@ public class DocumentacionController {
         return ResponseEntity.ok(especificacion);
     }
     
+    @PostMapping("/insertCcpRemolque/{idoficinaDocumenta}")
+    public ResponseEntity<Boolean> insertCcpRemolque(
+        @PathVariable("idoficinaDocumenta") String idoficinaDocumenta,
+          @RequestBody CcpRemolque dataRemolque) throws Exception{
+        Boolean response = documentacionService.insertCcpRemolque(dataRemolque, idoficinaDocumenta);
+        if (!response)
+            return ResponseEntity.noContent().build();
+          return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/insertCcpRemolqueExterno/{idoficinaDocumenta}")
+    public ResponseEntity<Boolean> insertCcpRemolqueExterno(
+        @PathVariable("idoficinaDocumenta") String idoficinaDocumenta,
+          @RequestBody CcpRemolqueExterno dataRemolque) throws Exception{
+        Boolean response = documentacionService.insertCcpRemolqueExterno(dataRemolque, idoficinaDocumenta);
+        if (!response)
+            return ResponseEntity.noContent().build();
+          return ResponseEntity.ok(response);
+    }
       
 }

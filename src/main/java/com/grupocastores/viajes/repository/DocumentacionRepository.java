@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.ViajeEsquemaGasto;
+import com.grupocastores.commons.inhouse.CcpRemolque;
+import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
 import com.grupocastores.commons.inhouse.DetaCo;
 import com.grupocastores.commons.inhouse.EspecificacionTalon;
 import com.grupocastores.commons.inhouse.FolioDos;
@@ -575,7 +577,48 @@ public class DocumentacionRepository extends UtilitiesRepository{
         return resultList;
       
     }
-
+    
+    /**
+     * insertCcpRemolque: inserta registro en complementocpremolque.
+     * 
+     * @param (CcpRemolque) dataViaje
+     * @param (String) linkedServer
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Guias
+     * @throws Exception 
+     * @date 2022-11-16
+     */
+    public Boolean insertCcpRemolque(CcpRemolque dataRemolque, String linkedServer) throws Exception{
+        String queryCreateCcpRemolque ="INSERT INTO OPENQUERY("+ linkedServer +", "
+                + "'SELECT *"
+                + " FROM cfdinomina.complementocp_remolque LIMIT 1') VALUES('"+dataRemolque.getIdperFac()+"', '"+dataRemolque.getConsCcp()+"','"+dataRemolque.getSubtipoRem()+"','"+dataRemolque.getDescripcion()+"', '"+dataRemolque.getPlaca()+"')";
+        
+        if (executeStoredProcedure(queryCreateCcpRemolque) == false)
+           return false; 
+        return true;        
+    }
+    
+    /**
+     * insertCcpRemolqueExterno: inserta registro en complementocpremolque.
+     * 
+     * @param (CcpRemolqueExterno) dataViaje
+     * @param (String) linkedServer
+     * @version 0.0.1
+     * @author Oscar Eduardo Guerra Salcedo [OscarGuerra] 
+     * @return Guias
+     * @throws Exception 
+     * @date 2022-11-16
+     */
+    public Boolean insertCcpRemolqueExterno(CcpRemolqueExterno dataRemolque, String linkedServer) throws Exception{
+        String queryCreateCcpRemolque ="INSERT INTO OPENQUERY("+ linkedServer +", "
+                + "'SELECT *"
+                + " FROM cfdinomina.complementocp_remolque_ext LIMIT 1') VALUES('"+dataRemolque.getIdViaje()+"', '"+dataRemolque.getIdOficinaViaje()+"','"+dataRemolque.getPlacas()+"','"+dataRemolque.getFechamod()+"', '"+dataRemolque.getHoramod()+"')";
+        
+        if (executeStoredProcedure(queryCreateCcpRemolque) == false)
+           return false; 
+        return true;        
+    }
    
     
 
