@@ -164,10 +164,10 @@ public class DocumentacionController {
         return ResponseEntity.ok(response);
       }
     
-    @GetMapping("/getGuia/{noGuia}/{tabla}")
+    @GetMapping("/getGuia/{noGuia}/{idOficinaDocumenta}")
     public ResponseEntity<Guias> getGuia(
-            @PathVariable("noGuia") String noGuia, @PathVariable("tabla") String tabla) throws Exception{
-        Guias response = documentacionService.getGuia(noGuia, tabla);
+            @PathVariable("noGuia") String noGuia, @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        Guias response = documentacionService.getGuia(noGuia, idOficinaDocumenta);
         if (response == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
@@ -178,6 +178,28 @@ public class DocumentacionController {
           @RequestBody List<TgCustom> dataGuia) throws Exception{
         Boolean response = documentacionService.insertTalonGuia(dataGuia);
         if (!response)
+          return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/getTalonesGuia/{noGuia}/{tabla}/{idoficinadocumenta}")
+    public ResponseEntity<List<TgCustom>> getTalonGuia (
+            @PathVariable("noGuia") String noGuia,
+            @PathVariable("idoficinadocumenta") String idOficinaDocumenta,
+            @PathVariable("tabla") String tabla) throws Exception{
+        List<TgCustom> response = documentacionService.getTalonesGuia(noGuia, idOficinaDocumenta, tabla);
+        if (response == null)
+          return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/getTalonesTrGuia/{noGuia}/{idoficinadocumenta}")
+    public ResponseEntity<List<TalonCustomResponse>> getTalonesGuia(
+            @PathVariable("noGuia") String noGuia,
+            @PathVariable("idoficinadocumenta") String idOficinaDocumenta
+            ) throws Exception{
+        List<TalonCustomResponse> response = documentacionService.getTalonesTrGuia(noGuia, idOficinaDocumenta);
+        if (response == null)
           return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
     }

@@ -175,7 +175,7 @@ public interface IDocumentacionService {
 
     public Guias updateGuia(Guias dataGuia);
 
-    public Guias getGuia(String noGuia, String tabla);
+    public Guias getGuia(String noGuia, String idOficinaDocumenta);
 
     public Boolean insertGuMesAnio(GuMesAnioCustom dataGuiaMesAnio);
 
@@ -202,6 +202,10 @@ public interface IDocumentacionService {
     public Boolean insertCcpRemolque(CcpRemolque dataRemolque, String idoficinaDocumenta) throws Exception;
 
     public Boolean insertCcpRemolqueExterno(CcpRemolqueExterno dataRemolque, String idoficinaDocumenta) throws Exception;
+
+    public List<TalonCustomResponse> getTalonesTrGuia(String noGuia, String idOficinaDocumenta) throws Exception;
+
+    public List<TgCustom> getTalonesGuia(String noGuia, String idOficinaDocumenta, String tabla) throws Exception;
 
     
     

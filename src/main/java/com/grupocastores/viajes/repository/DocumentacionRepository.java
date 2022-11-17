@@ -74,7 +74,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
         
     
     static final String queryGetGuia =
-            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.guias v WHERE v.no_guia = \"%s\" AND v.tabla = \"%s\";');";
+            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.guias v WHERE v.no_guia = \"%s\" ;');";
        
     static final String queryFindFolioViajes =
           "SELECT * FROM OPENQUERY(%s, 'SELECT tipofolio, idfolio, clavefolio, descripcion FROM talones.foliosdos WHERE tipofolio = \"%s\" ;');";
@@ -91,6 +91,13 @@ public class DocumentacionRepository extends UtilitiesRepository{
     static final String queryGetRemolqueExterno =
             "SELECT * FROM OPENQUERY(%s, 'select idremolqueext AS idremolque, empresa AS placas from camiones.entradas_remolquesext ORDER BY fechamod DESC ;');";
 
+    static final String queryTalonesTrGuia =
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tr.cla_talon AS clatalon, tr.nomorigen, tr.calleorigen, tr.nomdestino, tr.calledestino, et.idesquema, et.idnegociacion, et.idcliente, et.idoficina, tr.importeseguro,tr.recoleccion, tr.entrega, tr.maniobras, tr.ferry, tr.revac, tr.otroscargos, tr.gps, tr.importesubtotal, tr.importeiva, tr.importeiva_ret AS importeivaret,tr.otras_lineas AS otraslineas, tr.importetotal, tr.val_decl AS valdecl FROM talones.tr%s tr INNER JOIN talones.especificacion_talon et ON tr.cla_talon = et.cla_talon WHERE tr.cla_talon = \"%s\"; ');";
+    
+    static final String queryTalonesGuia =
+            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.tg%s tg WHERE no_guia = \"%s\"; ');";
+    
+    
     /**
      * findTalones: Se consultan talones para documentacion de viaje .
      * 
@@ -286,9 +293,9 @@ public class DocumentacionRepository extends UtilitiesRepository{
 
     }
     
-    public Guias getGuia(String noGuia, String tabla, String db) {
-        Query query = entityManager.createNativeQuery(String.format(queryGetGuia, db,
-                noGuia, tabla),Guias.class
+    public Guias getGuia(String noGuia, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(queryGetGuia, linkedServer,
+                noGuia),Guias.class
           );
         
         return (Guias) query.getResultList().get(0);
@@ -369,6 +376,21 @@ public class DocumentacionRepository extends UtilitiesRepository{
         if (executeStoredProcedure(queryCreateViajes) == false)
            return false; 
         return true;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<TgCustom> getTalonesGuia(String noGuia, String tabla, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(queryTalonesGuia,linkedServer,
+                tabla, noGuia),TgCustom.class
+          );
+        return (List<TgCustom>) query.getResultList();    
+    }
+    
+    public TalonCustomResponse getTalonesTrGuia(String claTalon, String tabla, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(queryTalonesTrGuia,linkedServer,
+                tabla, claTalon),TalonCustomResponse.class
+          );
+        return (TalonCustomResponse) query.getResultList().get(0);    
     }
     
     /**
@@ -619,6 +641,8 @@ public class DocumentacionRepository extends UtilitiesRepository{
            return false; 
         return true;        
     }
+
+    
    
     
 

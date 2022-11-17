@@ -1,5 +1,6 @@
 package com.grupocastores.viajes.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.grupocastores.commons.ViajeEsquemaGasto;
+import com.grupocastores.commons.inhouse.BitacoraViajesRequest;
 import com.grupocastores.commons.inhouse.CcpRemolque;
 import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
 import com.grupocastores.commons.inhouse.DetaCo;
@@ -357,6 +359,36 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
       
         return true;
     }
+    
+    @Override
+    public List<TgCustom> getTalonesGuia(String noGuia, String idOficinaDocumenta, String tabla) throws Exception {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        List<TgCustom> list =  documentacionRepository.getTalonesGuia(noGuia, tabla, DBPRUEBA);
+        if(list.isEmpty()) {
+            throw new Exception("No fue posible obtener los talones para la guia "+noGuia);
+        }
+        return list;
+    }
+    
+    @Override
+    public List<TalonCustomResponse> getTalonesTrGuia(String noGuia, String idOficinaDocumenta) throws Exception {
+        Guias guia = getGuia(noGuia, idOficinaDocumenta);
+        List<TalonCustomResponse> talonCustomRespone = new ArrayList<TalonCustomResponse>();
+        if( guia != null) {
+            List<TgCustom> talones = getTalonesGuia(guia.getNoGuia(), idOficinaDocumenta, guia.getTabla());
+            talones.forEach( itemTalon -> {
+                TablaTalonesOficina tablaTalon =  getTablaTalon(itemTalon.getClaTalon(), idOficinaDocumenta);
+                if( tablaTalon != null) {
+                    TalonCustomResponse talonTr = documentacionRepository.getTalonesTrGuia(itemTalon.getClaTalon(), tablaTalon.getTabla(), DBPRUEBA);
+                    if( talonTr != null ) {
+                        talonCustomRespone.add(talonTr);
+                    }
+                }
+                
+            });
+        }
+        return talonCustomRespone;
+    }
 
     /**
      * insertGuiaViaje: inserta detalle de GuiaViaje.
@@ -383,7 +415,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     @Override
     public Guias updateGuia(Guias dataGuia) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice("1144");
-        Guias guia = getGuia(dataGuia.getNoGuia(), dataGuia.getTabla());
+        Guias guia = getGuia(dataGuia.getNoGuia(), dataGuia.getIdoficina());
         guia.setNoGuia(dataGuia.getNoGuia());
         guia.setTabla(dataGuia.getTabla());
         guia.setStatus(dataGuia.getStatus());
@@ -399,9 +431,9 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     }
 
     @Override
-    public Guias getGuia(String noGuia, String tabla) {
+    public Guias getGuia(String noGuia, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice("1144");
-        Guias response = documentacionRepository.getGuia(noGuia, tabla, DBPRUEBA);
+        Guias response = documentacionRepository.getGuia(noGuia,DBPRUEBA);
         if(response != null)
             return response;
         return null;
@@ -574,6 +606,10 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         }
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible insertar el remolque externo en complemento ");
     }
+
+   
+
+    
 
    
 
