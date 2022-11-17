@@ -112,6 +112,16 @@ public class DocumentacionController {
         return ResponseEntity.ok(response);
     }
     
+    @PutMapping("/updateViajeEsquema/{idOficinaDocumenta}")
+    public ResponseEntity<Boolean> updateViajeEsquema(
+          @RequestBody ViajeEsquemaGasto dataViajeEsquema,
+          @PathVariable String idOficinaDocumenta) throws Exception{
+        Boolean response = documentacionService.updateViajeEsquema(dataViajeEsquema, idOficinaDocumenta);
+      if (!response)
+          return ResponseEntity.noContent().build();
+      return ResponseEntity.ok(response);
+    }
+    
     @PostMapping("/insertViajeEsquema/{idOficinaDocumenta}")
     public ResponseEntity<Boolean> insertViajeEsquema(
           @RequestBody ViajeEsquemaGasto dataViajeEsquema,

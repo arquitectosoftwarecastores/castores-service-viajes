@@ -256,6 +256,15 @@ public class DocumentacionRepository extends UtilitiesRepository{
         return true;    
     }
     
+    public Boolean updateViajeEsquema(ViajeEsquemaGasto dataViajeEsquema, String linkedServer) {
+        String queryCreateViajes = "EXEC ('UPDATE talones.viajes_esquema_gasto  SET idesquemagasto = \""+dataViajeEsquema.getIdesquemagasto()+"\" WHERE idviaje = \""+dataViajeEsquema.getIdviaje()+"\"') AT "+ linkedServer +";";
+        
+        if (executeStoredProcedure(queryCreateViajes) == false)
+           return false; 
+        return true;
+    }
+
+    
     public ViajeEsquemaGasto getViajeEsquema(long idViaje, String linkedServer) {
         Query query = entityManager.createNativeQuery(String.format(queryGetViajeEsquemaGasto,
                 linkedServer, idViaje),
@@ -657,6 +666,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
         return true;        
     }
 
+    
    
 
     

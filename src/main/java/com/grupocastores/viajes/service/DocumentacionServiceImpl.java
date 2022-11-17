@@ -220,6 +220,24 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     }
     
     @Override
+    public Boolean updateViajeEsquema(ViajeEsquemaGasto dataViajeEsquema, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        Boolean viajeEsquema = documentacionRepository.updateViajeEsquema(dataViajeEsquema, DBPRUEBA);
+        if (!viajeEsquema )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible actualiozar el esquema del viaje"+dataViajeEsquema);
+        return viajeEsquema;
+    }
+    
+    @Override
+    public ViajeEsquemaGasto getViajeEsquema(long idViaje, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        ViajeEsquemaGasto viajeEsquema = documentacionRepository.getViajeEsquema(idViaje, DBPRUEBA);
+        if (viajeEsquema == null )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posibleobtener el esquema del viaje"+idViaje);
+        return viajeEsquema;
+    }
+    
+    @Override
     public List<Viajes> filterViajes (String table, int idEsquema, int idesquemagasto, int tipounidad,int tiporuta, int idruta, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
         List<Viajes> response = documentacionRepository.filterViajes(table, idEsquema, idesquemagasto, tipounidad, tiporuta, idruta, DBPRUEBA);
@@ -606,14 +624,9 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible insertar el remolque externo en complemento ");
     }
 
-    @Override
-    public ViajeEsquemaGasto getViajeEsquema(long idViaje, String idOficinaDocumenta) {
-        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-        ViajeEsquemaGasto viajeEsquema = documentacionRepository.getViajeEsquema(idViaje, DBPRUEBA);
-        if (viajeEsquema == null )
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posibleobtener el esquema del viaje"+idViaje);
-        return viajeEsquema;
-    }
+   
+
+   
 
    
 

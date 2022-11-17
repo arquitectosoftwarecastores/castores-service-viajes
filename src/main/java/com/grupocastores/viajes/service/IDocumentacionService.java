@@ -209,6 +209,8 @@ public interface IDocumentacionService {
 
     public ViajeEsquemaGasto getViajeEsquema(long idViaje, String idOficina);
 
+    public Boolean updateViajeEsquema(ViajeEsquemaGasto dataViajeEsquema, String idOficinaDocumenta);
+
     
     
 
