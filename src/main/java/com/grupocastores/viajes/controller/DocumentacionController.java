@@ -166,6 +166,26 @@ public class DocumentacionController {
       return ResponseEntity.ok(response);
     }
     
+    @GetMapping("/getGuiasViaje/{idViaje}/{idOficinaDocumenta}")
+    public ResponseEntity<List<Guiaviaje>> getGuiasViaje(
+            @PathVariable("idViaje") int idViaje,
+            @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        List<Guiaviaje> response = documentacionService.getGuiasViaje(idViaje, idOficinaDocumenta);
+      if (response == null)
+          return ResponseEntity.noContent().build();
+      return ResponseEntity.ok(response);
+    }
+    
+    @PutMapping("/updateGuiaViaje/{idOficinaDocumenta}")
+    public ResponseEntity<Boolean> updateGuiaViaje(
+          @RequestBody Guiaviaje dataGuiaViaje,
+          @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
+        Boolean response = documentacionService.updateGuiaViaje(dataGuiaViaje, idOficinaDocumenta);
+      if (response == null)
+          return ResponseEntity.noContent().build();
+      return ResponseEntity.ok(response);
+    }
+    
     @PostMapping("/insertGuia")
     public ResponseEntity<Guias> insertGuia(
           @RequestBody Guias dataGuia) throws Exception{

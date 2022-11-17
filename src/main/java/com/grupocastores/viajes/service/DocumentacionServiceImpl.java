@@ -311,6 +311,25 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         return null;
     }
     
+    @Override
+    public Boolean updateGuiaViaje(Guiaviaje dataGuiaViaje, String idOficinaDocumenta)  throws Exception{
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        Boolean updated = documentacionRepository.updateGuiaViaje(dataGuiaViaje, DBPRUEBA);
+        if (!updated )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible actualizar la tabla guia-viaje con id viaje"+dataGuiaViaje.getIdviaje()+" Y numero de guia"+dataGuiaViaje.getNoGuia());
+        return updated;
+    }
+
+    @Override
+    public List<Guiaviaje> getGuiasViaje(int idViaje, String idOficinaDocumenta) throws Exception {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        List<Guiaviaje> list =  documentacionRepository.getGuiasViaje(idViaje ,DBPRUEBA);
+        if(list.isEmpty()) {
+            throw new Exception("No fue posible obtener las guias para el viaje "+idViaje);
+        }
+        return list;
+    }
+    
     /**
      * insertImporteGuia: inserta importe de guia.
      * 
@@ -623,6 +642,8 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
         }
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible insertar el remolque externo en complemento ");
     }
+
+   
 
    
 

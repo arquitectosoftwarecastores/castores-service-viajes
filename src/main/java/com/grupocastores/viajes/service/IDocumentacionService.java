@@ -211,6 +211,10 @@ public interface IDocumentacionService {
 
     public Boolean updateViajeEsquema(ViajeEsquemaGasto dataViajeEsquema, String idOficinaDocumenta);
 
+    public Boolean updateGuiaViaje(Guiaviaje dataGuiaViaje, String idOficinaDocumenta) throws Exception;
+
+    public List<Guiaviaje> getGuiasViaje(int idViaje, String idOficinaDocumenta) throws Exception;
+
     
     
 

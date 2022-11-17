@@ -101,6 +101,9 @@ public class DocumentacionRepository extends UtilitiesRepository{
     static final String queryTalonesGuia =
             "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.tg%s tg WHERE no_guia = \"%s\"; ');";
     
+    static final String queryGetGuiasViaje =
+            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.guiaviaje tg WHERE tg.idviaje = \"%s\"; ');";
+    
     
     /**
      * findTalones: Se consultan talones para documentacion de viaje .
@@ -469,8 +472,8 @@ public class DocumentacionRepository extends UtilitiesRepository{
      * @throws Exception 
      * @date 2022-10-21
      */
-    public boolean insertGuiaViaje(Guiaviaje dataViajeGuia, String db) {
-        String queryCreateGuiaViaje ="INSERT INTO OPENQUERY("+ db +", "
+    public boolean insertGuiaViaje(Guiaviaje dataViajeGuia, String linkedServer) {
+        String queryCreateGuiaViaje ="INSERT INTO OPENQUERY("+ linkedServer +", "
                 + "' SELECT * FROM talones.guiaviaje LIMIT 1') VALUES('"+dataViajeGuia.getIdviaje()+"', '"+dataViajeGuia.getIdoficina()+"' ,'"+dataViajeGuia.getNoGuia()+"', '"+dataViajeGuia.getIdoficinaguia()+"', '"+dataViajeGuia.getEstatusguia()+"', '"+dataViajeGuia.getConsecutivo()+"', '"+dataViajeGuia.getImpresionpreguia()+"', '"+dataViajeGuia.getImpresionguia()+"', '"+dataViajeGuia.getEstatus()+"', '"+dataViajeGuia.getIdpersonal()+"', '"+dataViajeGuia.getFechamod()+"', '"+dataViajeGuia.getHoramod()+"', '"+dataViajeGuia.getTotalguia()+"', '"+dataViajeGuia.getIdoficinadeposito()+"', '"+dataViajeGuia.getTotaldeposito()+"', '"+dataViajeGuia.getOperacionguia()+"', '"+dataViajeGuia.getIdoficinadestino()+"', '"+dataViajeGuia.getVisitada()+"' )";
         
         if (executeStoredProcedure(queryCreateGuiaViaje) == false)
@@ -478,6 +481,21 @@ public class DocumentacionRepository extends UtilitiesRepository{
         return true;
     }
     
+    public Boolean updateGuiaViaje(Guiaviaje dataGuiaViaje, String linkedServer) {
+        String queryCreateViajes = "EXEC ('UPDATE talones.guiaviaje SET estatusguia = \""+dataGuiaViaje.getEstatusguia()+"\", consecutivo = \""+dataGuiaViaje.getConsecutivo()+"\" , impresionpreguia =\""+dataGuiaViaje.getImpresionpreguia()+"\", impresionguia = \""+dataGuiaViaje.getImpresionguia()+"\", estatus = \""+dataGuiaViaje.getEstatus()+"\", idpersonal = \""+dataGuiaViaje.getIdpersonal()+"\", fechamod = \""+dataGuiaViaje.getFechamod()+"\", horamod = \""+dataGuiaViaje.getHoramod()+"\", totalguia = \""+dataGuiaViaje.getTotalguia()+"\", idoficinadeposito =\""+dataGuiaViaje.getIdoficinadeposito()+"\", totaldeposito = \""+dataGuiaViaje.getTotaldeposito()+"\", operacionguia = \""+dataGuiaViaje.getOperacionguia()+"\", idoficinadestino = \""+dataGuiaViaje.getIdoficinadestino()+"\", visitada = \""+dataGuiaViaje.getVisitada()+"\" WHERE idviaje = \""+dataGuiaViaje.getIdviaje()+"\" AND idoficina = \""+dataGuiaViaje.getIdoficina()+"\" AND no_guia= \""+dataGuiaViaje.getNoGuia()+"\" ') AT "+ linkedServer +";";
+        
+        if (executeStoredProcedure(queryCreateViajes) == false)
+           return false; 
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Guiaviaje> getGuiasViaje(int idViaje, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(queryGetGuiasViaje,linkedServer,
+                idViaje),Guiaviaje.class
+          );
+        return (List<Guiaviaje>) query.getResultList();  
+    }
     /**
      * updateGuMesAnio: actualiza tabla gumesanio.
      * 
@@ -665,6 +683,9 @@ public class DocumentacionRepository extends UtilitiesRepository{
            return false; 
         return true;        
     }
+
+   
+
 
     
    
