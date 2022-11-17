@@ -9,7 +9,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
-import com.grupocastores.commons.ViajeEsquemaGasto;
+
 import com.grupocastores.commons.inhouse.CcpRemolque;
 import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
 import com.grupocastores.commons.inhouse.DetaCo;
@@ -24,6 +24,7 @@ import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.inhouse.ViajeEsquemaGasto;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Talones;
 import com.grupocastores.commons.oficinas.Viajes;
@@ -52,6 +53,9 @@ public class DocumentacionRepository extends UtilitiesRepository{
     
     static final String queryGetViaje =
              "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.viajes v WHERE v.idviaje = %s AND v.idoficina = \"%s\";');";
+    
+    static final String queryGetViajeEsquemaGasto =
+            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.viajes_esquema_gasto v WHERE v.idviaje = %s ;');";
     
     static final String queryGetGuMesAnio =
              "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.gu%s tr WHERE tr.no_guia = \"%s\" ;');";
@@ -250,6 +254,17 @@ public class DocumentacionRepository extends UtilitiesRepository{
         if (executeStoredProcedure(queryCreateViajes) == false)
            return false; 
         return true;    
+    }
+    
+    public ViajeEsquemaGasto getViajeEsquema(long idViaje, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(queryGetViajeEsquemaGasto,
+                linkedServer, idViaje),
+                ViajeEsquemaGasto.class
+          );
+        ViajeEsquemaGasto resultList = (ViajeEsquemaGasto) query.getResultList().get(0);
+        if(resultList == null)
+            return null;
+        return resultList;
     }
     
     /**
@@ -641,6 +656,8 @@ public class DocumentacionRepository extends UtilitiesRepository{
            return false; 
         return true;        
     }
+
+   
 
     
    

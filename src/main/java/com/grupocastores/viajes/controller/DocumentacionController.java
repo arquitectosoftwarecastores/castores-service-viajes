@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
-import com.grupocastores.commons.ViajeEsquemaGasto;
+
 import com.grupocastores.commons.inhouse.CcpRemolque;
 import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
 import com.grupocastores.commons.inhouse.DetaCo;
@@ -29,6 +29,7 @@ import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.inhouse.ViajeEsquemaGasto;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Talones;
 import com.grupocastores.commons.oficinas.Viajes;
@@ -119,6 +120,15 @@ public class DocumentacionController {
       if (!response)
           return ResponseEntity.noContent().build();
       return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/getViajeEsquema/{idViaje}/{idOficina}")
+    public ResponseEntity<ViajeEsquemaGasto> getViajeEsquema(
+            @PathVariable("idViaje") long idViaje, @PathVariable("idOficina") String idOficina) throws Exception{
+        ViajeEsquemaGasto response = documentacionService.getViajeEsquema(idViaje, idOficina);
+        if (response == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
     }
     
     @GetMapping("/filterViajes/{table}/{idEsquema}/{idesquemagasto}/{tipounidad}/{tiporuta}/{idruta}/{idoficinadocumenta}")

@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import com.grupocastores.commons.ViajeEsquemaGasto;
 import com.grupocastores.commons.inhouse.BitacoraViajesRequest;
 import com.grupocastores.commons.inhouse.CcpRemolque;
 import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
@@ -27,6 +25,7 @@ import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
 import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.inhouse.ViajeEsquemaGasto;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Personal;
 import com.grupocastores.commons.oficinas.Servidores;
@@ -605,6 +604,15 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
             return inserted;
         }
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posible insertar el remolque externo en complemento ");
+    }
+
+    @Override
+    public ViajeEsquemaGasto getViajeEsquema(long idViaje, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        ViajeEsquemaGasto viajeEsquema = documentacionRepository.getViajeEsquema(idViaje, DBPRUEBA);
+        if (viajeEsquema == null )
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No fue posibleobtener el esquema del viaje"+idViaje);
+        return viajeEsquema;
     }
 
    

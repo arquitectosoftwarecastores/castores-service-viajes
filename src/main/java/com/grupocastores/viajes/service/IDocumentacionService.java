@@ -3,7 +3,6 @@ package com.grupocastores.viajes.service;
 import java.util.List;
 
 import com.grupocastores.commons.inhouse.TalonCustomResponse;
-import com.grupocastores.commons.ViajeEsquemaGasto;
 import com.grupocastores.commons.inhouse.CcpRemolque;
 import com.grupocastores.commons.inhouse.CcpRemolqueExterno;
 import com.grupocastores.commons.inhouse.DetaCo;
@@ -18,6 +17,7 @@ import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.inhouse.ViajeEsquemaGasto;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Talones;
 import com.grupocastores.commons.oficinas.Tg;
@@ -206,6 +206,8 @@ public interface IDocumentacionService {
     public List<TalonCustomResponse> getTalonesTrGuia(String noGuia, String idOficinaDocumenta) throws Exception;
 
     public List<TgCustom> getTalonesGuia(String noGuia, String idOficinaDocumenta, String tabla) throws Exception;
+
+    public ViajeEsquemaGasto getViajeEsquema(long idViaje, String idOficina);
 
     
     
