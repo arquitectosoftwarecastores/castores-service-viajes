@@ -18,6 +18,7 @@ import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
+import com.grupocastores.commons.inhouse.GuiaViajeCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
@@ -102,7 +103,7 @@ public class DocumentacionRepository extends UtilitiesRepository{
             "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.tg%s tg WHERE no_guia = \"%s\"; ');";
     
     static final String queryGetGuiasViaje =
-            "SELECT * FROM OPENQUERY(%s, 'SELECT * FROM talones.guiaviaje tg WHERE tg.idviaje = \"%s\"; ');";
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tgv.*, tg.tabla FROM talones.guiaviaje tgv INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia  WHERE tgv .idviaje = \"%s\"; ');";
     
     
     /**
@@ -490,11 +491,11 @@ public class DocumentacionRepository extends UtilitiesRepository{
     }
 
     @SuppressWarnings("unchecked")
-    public List<Guiaviaje> getGuiasViaje(int idViaje, String linkedServer) {
+    public List<GuiaViajeCustom> getGuiasViaje(int idViaje, String linkedServer) {
         Query query = entityManager.createNativeQuery(String.format(queryGetGuiasViaje,linkedServer,
-                idViaje),Guiaviaje.class
+                idViaje),GuiaViajeCustom.class
           );
-        return (List<Guiaviaje>) query.getResultList();  
+        return (List<GuiaViajeCustom>) query.getResultList();  
     }
     /**
      * updateGuMesAnio: actualiza tabla gumesanio.

@@ -11,6 +11,7 @@ import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
+import com.grupocastores.commons.inhouse.GuiaViajeCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
@@ -213,7 +214,7 @@ public interface IDocumentacionService {
 
     public Boolean updateGuiaViaje(Guiaviaje dataGuiaViaje, String idOficinaDocumenta) throws Exception;
 
-    public List<Guiaviaje> getGuiasViaje(int idViaje, String idOficinaDocumenta) throws Exception;
+    public List<GuiaViajeCustom> getGuiasViaje(int idViaje, String idOficinaDocumenta) throws Exception;
 
     
     

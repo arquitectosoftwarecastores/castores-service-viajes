@@ -18,6 +18,7 @@ import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
+import com.grupocastores.commons.inhouse.GuiaViajeCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
@@ -321,9 +322,9 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     }
 
     @Override
-    public List<Guiaviaje> getGuiasViaje(int idViaje, String idOficinaDocumenta) throws Exception {
+    public List<GuiaViajeCustom> getGuiasViaje(int idViaje, String idOficinaDocumenta) throws Exception {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
-        List<Guiaviaje> list =  documentacionRepository.getGuiasViaje(idViaje ,DBPRUEBA);
+        List<GuiaViajeCustom> list =  documentacionRepository.getGuiasViaje(idViaje ,DBPRUEBA);
         if(list.isEmpty()) {
             throw new Exception("No fue posible obtener las guias para el viaje "+idViaje);
         }

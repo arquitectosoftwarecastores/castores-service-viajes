@@ -23,6 +23,7 @@ import com.grupocastores.commons.inhouse.FolioDos;
 import com.grupocastores.commons.inhouse.FoliosGuias;
 import com.grupocastores.commons.inhouse.GuMesAnio;
 import com.grupocastores.commons.inhouse.GuMesAnioCustom;
+import com.grupocastores.commons.inhouse.GuiaViajeCustom;
 import com.grupocastores.commons.inhouse.Guias;
 import com.grupocastores.commons.inhouse.ImporteGuia;
 import com.grupocastores.commons.inhouse.OperadorCustom;
@@ -167,10 +168,10 @@ public class DocumentacionController {
     }
     
     @GetMapping("/getGuiasViaje/{idViaje}/{idOficinaDocumenta}")
-    public ResponseEntity<List<Guiaviaje>> getGuiasViaje(
+    public ResponseEntity<List<GuiaViajeCustom>> getGuiasViaje(
             @PathVariable("idViaje") int idViaje,
             @PathVariable("idOficinaDocumenta") String idOficinaDocumenta) throws Exception{
-        List<Guiaviaje> response = documentacionService.getGuiasViaje(idViaje, idOficinaDocumenta);
+        List<GuiaViajeCustom> response = documentacionService.getGuiasViaje(idViaje, idOficinaDocumenta);
       if (response == null)
           return ResponseEntity.noContent().build();
       return ResponseEntity.ok(response);
