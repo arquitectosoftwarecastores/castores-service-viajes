@@ -25,6 +25,7 @@ import com.grupocastores.commons.inhouse.OperadorCustom;
 import com.grupocastores.commons.inhouse.RemolqueInternoCustom;
 import com.grupocastores.commons.inhouse.TablaTalonesOficina;
 import com.grupocastores.commons.inhouse.TgCustom;
+import com.grupocastores.commons.inhouse.Unidades;
 import com.grupocastores.commons.inhouse.ViajeEsquemaGasto;
 import com.grupocastores.commons.oficinas.Guiaviaje;
 import com.grupocastores.commons.oficinas.Talones;
@@ -90,6 +91,9 @@ public class DocumentacionRepository extends UtilitiesRepository{
     static final String queryFilterViajes =
             "SELECT * FROM OPENQUERY(%s, 'SELECT tv.* FROM talones.viajes tv INNER JOIN talones.viajes_esquema_gasto tve ON tv.idviaje = tve.idviaje INNER JOIN talones.viajes_esquema_gasto tveg ON tv.idviaje = tveg.idviaje INNER JOIN talones.guiaviaje tgv ON tv.idviaje = tgv.idviaje INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia INNER JOIN talones.tg%s tgma ON tg.no_guia = tgma.no_guia INNER JOIN talones.talones tt ON tgma.cla_talon = tt.cla_talon INNER JOIN talones.especificacion_talon tet ON tgma.cla_talon =tet.cla_talon WHERE tet.idesquema = %s AND tve.idesquemagasto = %s AND tv.tipounidad = %s AND tv.tiporuta = %s AND tv.idruta = %s GROUP BY tv.idviaje ;');";
     
+    static final String queryFilterViajesNoParams =
+            "SELECT * FROM OPENQUERY(%s, 'SELECT tv.* FROM talones.viajes tv INNER JOIN talones.viajes_esquema_gasto tve ON tv.idviaje = tve.idviaje INNER JOIN talones.viajes_esquema_gasto tveg ON tv.idviaje = tveg.idviaje INNER JOIN talones.guiaviaje tgv ON tv.idviaje = tgv.idviaje INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia INNER JOIN talones.tg%s tgma ON tg.no_guia = tgma.no_guia INNER JOIN talones.talones tt ON tgma.cla_talon = tt.cla_talon INNER JOIN talones.especificacion_talon tet ON tgma.cla_talon =tet.cla_talon GROUP BY tv.idviaje ;');";
+    
     static final String queryGetRemolqueInterno =
             "SELECT * FROM OPENQUERY(%s, 'select idremolque, placas from camiones.remolques rem where rem.`status` = 1 AND idremolque = %s ;');";
     
@@ -105,7 +109,11 @@ public class DocumentacionRepository extends UtilitiesRepository{
     static final String queryGetGuiasViaje =
             "SELECT * FROM OPENQUERY(%s, 'SELECT tgv.*, tg.tabla FROM talones.guiaviaje tgv INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia  WHERE tgv .idviaje = \"%s\"; ');";
     
-    
+    static final String queryFindNoEconomicoByUnidad =
+			"SELECT * FROM OPENQUERY(" + DB_13 + ", 'SELECT noeconomico FROM camiones.unidades WHERE (tipounidad = 1 OR tipounidad = 2) AND estatus = 1 AND idunidad = %s;');";
+	
+    static final String queryGetViajeEsquema = 
+    		"SELECT * FROM OPENQUERY(%s, 'SELECT tet.idesquema FROM talones.viajes tv INNER JOIN talones.guiaviaje tgv ON tv.idviaje = tgv.idviaje INNER JOIN talones.guias tg ON tgv.no_guia = tg.no_guia INNER JOIN talones.tg%s tgma ON tg.no_guia = tgma.no_guia INNER JOIN talones.talones tt ON tgma.cla_talon = tt.cla_talon INNER JOIN talones.especificacion_talon tet ON tgma.cla_talon = tet.cla_talon WHERE tv.idviaje = \"%s\" GROUP BY tv.idviaje;');";
     /**
      * findTalones: Se consultan talones para documentacion de viaje .
      * 
@@ -345,6 +353,56 @@ public class DocumentacionRepository extends UtilitiesRepository{
           );
         
         return (List<Viajes>) query.getResultList();
+    }
+    
+    /**
+     * filterViajes: Realiza el filtrado de viajes
+     * 
+     * @param String table
+     * @param String linkedServer
+     * @version 0.0.1
+     * @author Cynthia Fuentes
+     * @return List<Viajes>
+     * @date 2022-11-18
+     */ 
+    @SuppressWarnings("unchecked")
+    public List<Viajes> filterViajes(String table, String linkedServer) {
+        Query query = entityManager.createNativeQuery(String.format(
+                queryFilterViajesNoParams,
+                linkedServer,
+                table
+                ),Viajes.class
+          );
+        
+        return (List<Viajes>) query.getResultList();
+    }
+    
+    /**
+     * getEsquemaViaje: Obtiene el esquema de un viaje
+     * 
+     * @param String table
+     * @param String linkedServer
+     * @param long idViaje
+     * @version 0.0.1
+     * @author Cynthia Fuentes
+     * @return Object
+     * @date 2022-11-22
+     */ 
+    @SuppressWarnings("unchecked")
+    public Object getEsquemaViaje(String table, String linkedServer, long idViaje) {
+        Query query = entityManager.createNativeQuery(String.format(
+                queryGetViajeEsquema,
+                linkedServer,
+                table,
+                idViaje
+                ));
+        
+        List<Object[]> list = query.getResultList();
+        
+        if(list == null || list.isEmpty())
+        	return null;
+        
+        return list.get(0);
     }
 
     
@@ -641,6 +699,24 @@ public class DocumentacionRepository extends UtilitiesRepository{
             return null;
         return resultList;
       
+    }
+    
+    /**
+     * findNoEconomicoByUnidad: Obtiene el noeconomico por idunidad
+     * 
+     * @param idUnidad (String)
+     * @return Object
+     * @author Cynthia Fuentes
+     * @date 2022-11-18
+     */
+    @SuppressWarnings("unchecked")
+    public Object findNoEconomicoByUnidad(int idUnidad){
+        Query query = entityManager.createNativeQuery(String.format(queryFindNoEconomicoByUnidad, idUnidad),
+                Unidades.class);
+        List<Unidades> list = query.getResultList();
+        if(list == null || list.isEmpty())
+            return null;
+        return list.get(0);
     }
     
     /**

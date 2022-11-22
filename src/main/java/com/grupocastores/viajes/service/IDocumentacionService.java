@@ -189,6 +189,8 @@ public interface IDocumentacionService {
     public DetaCo findDetacoSumatoria(String claTalon, String idOficinaDocumenta);
 
     public List<Viajes> filterViajes(String table, int idEsquema, int idesquemagasto, int tipounidad, int tiporuta, int idruta, String idOficinaDocumenta);
+    
+    public List<Viajes> filterViajes(String table, String idOficinaDocumenta);
 
     public List<RemolqueInternoCustom> getRemolqueInterno(int idRemolque, String idOficinaDocumenta);
 

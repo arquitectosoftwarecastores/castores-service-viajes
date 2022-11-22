@@ -242,13 +242,35 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
     public List<Viajes> filterViajes (String table, int idEsquema, int idesquemagasto, int tipounidad,int tiporuta, int idruta, String idOficinaDocumenta) {
         Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
         List<Viajes> response = documentacionRepository.filterViajes(table, idEsquema, idesquemagasto, tipounidad, tiporuta, idruta, DBPRUEBA);
-        if(response != null)
-            return response;
+        if(response != null) {
+        	response.stream().forEach(v -> {
+        		v.setIdesquema(idEsquema);
+        		v.setIdesquemagasto(idesquemagasto);
+        		v.setNoeconomico((String) documentacionRepository.findNoEconomicoByUnidad(v.getIdunidad()));
+        	});
+        	return response;
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Viajes> filterViajes (String table, String idOficinaDocumenta) {
+        Servidores server = utilitiesRepository.getLinkedServerByOfice(idOficinaDocumenta);
+        List<Viajes> response = documentacionRepository.filterViajes(table, DBPRUEBA);
+        if(response != null) {
+        	response.stream().forEach(v -> {
+        		ViajeEsquemaGasto esquemaGasto = (ViajeEsquemaGasto)documentacionRepository.getViajeEsquema(v.getIdviaje(), DBPRUEBA);
+        		v.setIdesquemagasto(esquemaGasto != null ? esquemaGasto.getIdesquemagasto() : 0);
+        		v.setIdesquema((Integer)documentacionRepository.getEsquemaViaje(table, DBPRUEBA, v.getIdviaje()));
+        		v.setNoeconomico((String) documentacionRepository.findNoEconomicoByUnidad(v.getIdunidad()));
+        	});
+        	return response;
+        }
         return null;
     }
     
     /**
-     * getFolioViaje: Se consulta el proximo folio  de guia.
+     * getFolioViaje: Se consulta el proximo folio de guia.
      * 
      * @param String idFolioGuia
      * @param String idOficinaDocumenta

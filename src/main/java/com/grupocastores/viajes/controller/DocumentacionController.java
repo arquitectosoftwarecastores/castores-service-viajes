@@ -152,7 +152,9 @@ public class DocumentacionController {
             @PathVariable("idruta") int idruta,
             @PathVariable("idoficinadocumenta") String idOficinaDocumenta
             ) throws Exception{
-        List<Viajes> response = documentacionService.filterViajes(table, idEsquema, idesquemagasto, tipounidad, tiporuta, idruta, idOficinaDocumenta);
+        List<Viajes> response = idEsquema == 0 ?
+        		documentacionService.filterViajes(table, idEsquema, idesquemagasto, tipounidad, tiporuta, idruta, idOficinaDocumenta) : 
+        		documentacionService.filterViajes(table, idOficinaDocumenta);
         if (response == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
