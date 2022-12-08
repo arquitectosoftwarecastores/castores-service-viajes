@@ -309,7 +309,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
             updateFolioGuia(dataGuia.getNoGuia(), DBPRUEBA);
             return dataGuia;
         }
-        return null;
+        throw new Exception("No fue posible insertar la guia ");
     }
     
     @Override
