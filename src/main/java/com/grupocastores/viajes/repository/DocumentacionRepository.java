@@ -325,8 +325,11 @@ public class DocumentacionRepository extends UtilitiesRepository{
         Query query = entityManager.createNativeQuery(String.format(queryGetGuia, linkedServer,
                 noGuia),Guias.class
           );
-        
-        return (Guias) query.getResultList().get(0);
+        if( query.getResultList() != null ) {
+            
+            return (Guias) query.getResultList().get(0);
+        }
+        return null;
     }
     
     @SuppressWarnings("unchecked")
