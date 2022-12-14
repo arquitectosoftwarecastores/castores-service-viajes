@@ -235,7 +235,7 @@ public class DocumentacionController {
     }
     
     @GetMapping("/getTalonesTrGuia/{noGuia}/{idoficinadocumenta}")
-    public ResponseEntity<List<TalonCustomResponse>> getTalonesGuia(
+    public ResponseEntity<List<TalonCustomResponse>> getTalonesTrGuia(
             @PathVariable("noGuia") String noGuia,
             @PathVariable("idoficinadocumenta") String idOficinaDocumenta
             ) throws Exception{
