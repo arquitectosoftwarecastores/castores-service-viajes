@@ -418,6 +418,7 @@ public class DocumentacionServiceImpl implements IDocumentacionService{
                 if( tablaTalon != null) {
                     TalonCustomResponse talonTr = documentacionRepository.getTalonesTrGuia(itemTalon.getClaTalon(), tablaTalon.getTabla(), DBPRUEBA);
                     if( talonTr != null ) {
+                        talonTr.setNoguia(guia.getNoGuia());
                         talonCustomRespone.add(talonTr);
                     }
                 }
